@@ -5,6 +5,7 @@ import scala.io.Source
 import scala.xml.factory.XMLLoader
 import javax.xml.parsers.{SAXParserFactory, SAXParser}
 import cc.factorie._
+import java.io.InputStream
 
 /**
  * @author John Sullivan
@@ -20,6 +21,11 @@ object MyXML extends XMLLoader[Elem] {
 }
 
 object PatentReader {
+  def apply(stream:InputStream):Iterator[Elem] = Source.fromInputStream(stream).getLines().toStream.split(_ != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>").map{
+    patentIter =>
+      MyXML.loadString(patentIter.mkString("\n"))
+  }
+
   def readFile(filename:String):Iterator[Elem] = Source.fromFile(filename).getLines().toStream.split(_ != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>").map{
     patentIter =>
       MyXML.loadString(patentIter.mkString("\n"))
