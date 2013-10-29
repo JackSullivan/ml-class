@@ -11,7 +11,11 @@ import java.util.zip.ZipFile
  */
 object PatentPipeline {
   def fromDir(dir:String):Iterator[Elem] = Paths.get(dir) match {
-    case path if Files.isDirectory(path) => Files.newDirectoryStream(path).iterator().asScala.flatMap{filePath =>
+    case path if Files.isDirectory(path) => Files.newDirectoryStream(path).iterator().asScala
+      .filter(_.toString.endsWith(".zip")) // todo this is bad
+      //.map{e => println(e.getFileName); e}
+      .flatMap{filePath =>
+      //println(filePath.getFileName)
       val zipFile = new ZipFile(filePath.toFile)
       zipFile.entries().asScala.flatMap{zipEntry =>
         PatentReader(zipFile.getInputStream(zipEntry))
@@ -24,7 +28,9 @@ object PatentPipeline {
 
   def main(args:Array[String]) {
     val patentsXML = PatentPipeline.fromDir("data/")
-
+    val x = patentsXML.next()
     println(patentsXML.next() \ "us-bibliographic-data-grant")
+
+
   }
 }
