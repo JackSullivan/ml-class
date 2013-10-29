@@ -1,17 +1,14 @@
 package so.modernized
 
 import scala.xml.Elem
-import cc.factorie.app.nlp.Document
+import cc.factorie.app.topics.lda
+import cc.factorie.variable.CategoricalSeqDomain
 
 /**
  * @author John Sullivan
  */
 case class Patent(id:String, sections:Iterable[String], claims:Iterable[String], abs:String, desc:String) {
-  def asDocument:Document = {
-    val doc = new Document(desc)
-    //DocumentAnnotatorPipeline.defaultDocumentAnnotationMap
-    doc
-  }
+  def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc)
 }
 
 object Patent {
