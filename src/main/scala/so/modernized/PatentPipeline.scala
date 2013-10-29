@@ -23,8 +23,14 @@ object PatentPipeline {
   def apply(dir:String):Iterator[Patent] = PatentFilters(fromDir(dir)).map{Patent.fromXML}
 
   def main(args:Array[String]) {
-    val patentsXML = PatentPipeline.fromDir("data/")
+    val patentsXML = PatentPipeline("data/")
+    val x = patentsXML.next()
 
-    println(patentsXML.next() \ "us-bibliographic-data-grant")
+
+    //println(x \ "us-bibliographic-data-grant" \ "classifications-ipcr")
+    //println(x \ "abstract")
+    //println(x \ "claims")
+
+    println(patentsXML.next())
   }
 }

@@ -11,5 +11,9 @@ object PatentFilters {
     }
   }
 
-  val filters:Seq[Elem => Boolean] = Seq(x => (x  \ "us-bibliographic-data-grant" \ "classifications-ipcr").nonEmpty)
+  val filters:Seq[Elem => Boolean] = Seq(
+    x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr").nonEmpty,
+    x => (x \ "abstract").nonEmpty,
+    x => (x \ "description").nonEmpty
+  )
 }
