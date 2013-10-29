@@ -2,7 +2,7 @@ package so.modernized
 
 import scala.xml.Elem
 import scala.collection.JavaConverters._
-import java.io.{FileNotFoundException}
+import java.io.FileNotFoundException
 import java.nio.file.{Files, Paths}
 import java.util.zip.ZipFile
 
@@ -19,6 +19,8 @@ object PatentPipeline {
     }
     case nonPath => throw new FileNotFoundException("%s is not a valid directory path" format nonPath.getFileName)
   }
+
+  def apply(dir:String):Iterator[Elem] = PatentFilters(fromDir(dir))
 
   def main(args:Array[String]) {
     val patentsXML = PatentPipeline.fromDir("data/")
