@@ -20,11 +20,11 @@ object PatentPipeline {
     case nonPath => throw new FileNotFoundException("%s is not a valid directory path" format nonPath.getFileName)
   }
 
-  def apply(dir:String):Iterator[Elem] = PatentFilters(fromDir(dir))
+  def apply(dir:String):Iterator[Patent] = PatentFilters(fromDir(dir)).map{Patent.fromXML}
 
   def main(args:Array[String]) {
     val patentsXML = PatentPipeline.fromDir("data/")
 
-    println(patentsXML.next())
+    println(patentsXML.next() \ "us-bibliographic-data-grant")
   }
 }
