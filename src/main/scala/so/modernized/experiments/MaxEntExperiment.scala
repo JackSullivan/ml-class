@@ -6,7 +6,7 @@ import scala.collection.mutable.ArrayBuffer
 import cc.factorie.app.strings
 import cc.factorie.app.nlp.Document
 import cc.factorie._
-import cc.factorie.app.classify.OnlineLinearMultiClassTrainer
+import cc.factorie.app.classify.{BatchLinearMultiClassTrainer, OnlineLinearMultiClassTrainer}
 
 /**
  * User: cellier
@@ -14,10 +14,9 @@ import cc.factorie.app.classify.OnlineLinearMultiClassTrainer
  * Time: 12:28 PM
  */
 class MaxEntExperiment {
-  def train(patents:Iterable[Patent], lrate:Double = 0.1, decay:Double = 0.01, cutoff:Int = 2, doBootstrap:Boolean = true, useHingeLoss:Boolean = false, numIterations: Int = 5, l1Factor:Double = 0.000001, l2Factor:Double = 0.000001)(implicit random: scala.util.Random) {
+  def train(patents:Iterable[Patent])(implicit random: scala.util.Random) {
     var docLabels = new ArrayBuffer[LabelTag]()
     patents.foreach{ patent => docLabels += new PatentDescFeatures(patent).label }
-    //val testVariables = patents.map{ patent => docLabels += new PatentDescFeatures(patent).label }
     val (trainVariables, testVariables) = docLabels.shuffle.split(0.5)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
