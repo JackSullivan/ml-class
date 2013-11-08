@@ -1,14 +1,12 @@
 package so.modernized.experiments
 
-import cc.factorie.app.nlp.parse.TransitionParser
-import cc.factorie.optimize.{Trainer, AdaGradRDA}
-import cc.factorie.app.nlp.Sentence
 import cc.factorie.variable._
 import so.modernized.{PatentPipeline, Patent}
 import scala.collection.mutable.ArrayBuffer
 import cc.factorie.app.strings
-import cc.factorie.app.classify.OnlineLinearMultiClassTrainer
+import cc.factorie.app.nlp.Document
 import cc.factorie._
+import cc.factorie.app.classify.OnlineLinearMultiClassTrainer
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,30 +25,31 @@ class MaxEntExperiment {
 //
 //    var patentClasses = new ArrayBuffer[Label]()
 //  }
-  def train(trainPatents:Seq[Patent], testPatents:Seq[Patent], lrate:Double = 0.1, decay:Double = 0.01, cutoff:Int = 2, doBootstrap:Boolean = true, useHingeLoss:Boolean = false, numIterations: Int = 5, l1Factor:Double = 0.000001, l2Factor:Double = 0.000001)(implicit random: scala.util.Random) {
 
-    var docLabels = new ArrayBuffer[Label]()
-    val trainVariables = trainPatents.flatMap{ patent => docLabels += new PatentDescFeatures(patent).label }
-    val testVariables = testPatents.flatMap{ patent => docLabels += new PatentDescFeatures(patent).label }
+  def train(patents:Iterator[Patent], lrate:Double = 0.1, decay:Double = 0.01, cutoff:Int = 2, doBootstrap:Boolean = true, useHingeLoss:Boolean = false, numIterations: Int = 5, l1Factor:Double = 0.000001, l2Factor:Double = 0.000001)(implicit random: scala.util.Random) {
+    var docLabels = new ArrayBuffer[LabelTag]()
+    val trainVariables = patents.toList.flatMap{ patent => docLabels += new PatentDescFeatures(patent).label }
+    val testVariables = patents.toList.flatMap{ patent => docLabels += new PatentDescFeatures(patent).label }
 
+    //val trainVariables = createDocuments(400,patents)
+    //val testVariables = createDocuments(10,patents)
+    println("Features Generated: Starting Training")
     PatentDomain.freeze()
-    val classifier = new OnlineLinearMultiClassTrainer().train(trainVariables,trainVariables.map(_.patent))
+//    def evaluate() {
+//      model.maximize((trainVariables++testVariables).map(_.attr[LabelTag]))(null)
+//      println("Train accuracy: "+ HammingObjective.accuracy(trainVariables.map(_.attr[LabelTag])))
+//      println("Test accuracy: "+ HammingObjective.accuracy(testVariables.map(_.attr[LabelTag])))
+//    }
+//    val examples = trainVariables.groupBy(d=> d.attr[LabelTag]).map(doc => new model.ChainStructuredSVMExample(trainVariables.map(_.attr[LabelTag]))).toSeq
+//    val optimizer = new cc.factorie.optimize.AdaGradRDA(rate=lrate, l1=l1Factor/examples.length, l2=l2Factor/examples.length)
+//    Trainer.onlineTrain(model.parameters, examples, maxIterations=numIterations, optimizer=optimizer, evaluate=evaluate, useParallelTrainer = false)
+
+    val classifier = new OnlineLinearMultiClassTrainer().train(docLabels.toSeq,trainVariables.map(_.patent).toSeq)
     (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.patent.value).bestLabelIndex)(null))
     val objective = HammingObjective
-    println ("Train accuracy = "+ objective.accuracy(trainVariables))
-    println ("Test  accuracy = "+ objective.accuracy(testVariables))
-  /*
-  def evaluate() {
+    println ("Train accuracy = "+ objective.accuracy(trainVariables.toSeq))
+    println ("Test  accuracy = "+ objective.accuracy(testVariables.toSeq))
 
-    //(trainVariables ++ testVariables).foreach(s => model.maximize(s.tokens.map(_.posLabel))(null))
-    //println("Train accuracy: "+ HammingObjective.accuracy(trainVariables.flatMap(s => s.tokens.map(_.posLabel))))
-      //println("Test accuracy: "+ HammingObjective.accuracy(testPatents.flatMap(s => s.tokens.map(_.posLabel))))
-    }
-    val examples = trainVariables.map(patent => new model.ChainStructuredSVMExample(sentence.tokens.map(_.posLabel))).toSeq
-    //val optimizer = new cc.factorie.optimize.AdaGrad(rate=lrate)
-    val optimizer = new cc.factorie.optimize.AdaGradRDA(rate=lrate, l1=l1Factor/examples.length, l2=l2Factor/examples.length)
-    Trainer.onlineTrain(model.parameters, examples, maxIterations=numIterations, optimizer=optimizer, evaluate=evaluate, useParallelTrainer = false)
-      */
   }
 
   object LabelDomain extends CategoricalDomain[String] {
@@ -61,35 +60,33 @@ class MaxEntExperiment {
     "E",
     "F",
     "G",
-    "H")
+    "H",
+    "N")
     freeze()
   }
+
   class PatentDescFeatures(patent:Patent) extends BinaryFeatureVectorVariable[String] {
     def domain = PatentDomain
-    val label = new Label(patent.section, this)
-    strings.alphaSegmenter(patent.desc).foreach(token => this += token)
-  }
-  /*
-  class PatentClaimsFeatures(patent:Patent) extends BinaryFeatureVectorVariable[String] {
-    def domain = PatentDomain
-    val label = new Label(patent.section, this)
-    patent.claims.map{claim => strings.alphaSegmenter(claim).foreach(token => this += token)}
-  }  */
+    val label = new LabelTag(this,patent.sections.head)
+    override def skipNonCategories = true
+    strings.alphaSegmenter(patent.desc).foreach{token => this + token}
+    strings.alphaSegmenter(patent.claims.reduce(_+_)).foreach{token => this + token}
 
-  class Label(labelString:String, val patent:PatentDescFeatures) extends LabeledCategoricalVariable(labelString) {
+    //println("Processing Patent: "+patent.id)
+  }
+
+  class LabelTag(val patent:PatentDescFeatures,labelString:String) extends LabeledCategoricalVariable(labelString) {
     def domain = LabelDomain
   }
-
   object PatentDomain extends CategoricalVectorDomain[String]
 
 }
 
 object MaxEntExperiment {
   def main(args: Array[String]){
-    val patents = PatentPipeline("data/")
-    val trainPatents = patents.drop(patents.length/2)
-    val testPatents = patents
     val MaxEnt = new MaxEntExperiment()
-    MaxEnt.train(trainPatents.toSeq,testPatents.toSeq)(random)
+    MaxEnt.train(PatentPipeline("data/"))(random)
+
+
   }
 }
