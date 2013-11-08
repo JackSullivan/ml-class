@@ -9,20 +9,20 @@ import cc.factorie._
 import cc.factorie.app.classify.OnlineLinearMultiClassTrainer
 
 /**
- * Created with IntelliJ IDEA.
  * User: cellier
  * Date: 10/31/13
  * Time: 12:28 PM
- * To change this template use File | Settings | File Templates.
  */
 class MaxEntExperiment {
   def train(patents:Iterable[Patent], lrate:Double = 0.1, decay:Double = 0.01, cutoff:Int = 2, doBootstrap:Boolean = true, useHingeLoss:Boolean = false, numIterations: Int = 5, l1Factor:Double = 0.000001, l2Factor:Double = 0.000001)(implicit random: scala.util.Random) {
     var docLabels = new ArrayBuffer[LabelTag]()
-    val trainVariables = patents.flatMap{ patent => docLabels += new PatentDescFeatures(patent).label }
-    val testVariables = patents.flatMap{ patent => docLabels += new PatentDescFeatures(patent).label }
+    patents.foreach{ patent => docLabels += new PatentDescFeatures(patent).label }
+    //val testVariables = patents.map{ patent => docLabels += new PatentDescFeatures(patent).label }
+    val (trainVariables, testVariables) = docLabels.shuffle.split(0.5)
+    (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     PatentDomain.freeze()
-    val classifier = new OnlineLinearMultiClassTrainer().train(docLabels.toSeq,docLabels.map(_.patent).toSeq)
+    val classifier = new OnlineLinearMultiClassTrainer().train(trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
     (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.patent.value).bestLabelIndex)(null))
     val objective = HammingObjective
     println ("Train accuracy = "+ objective.accuracy(trainVariables.toSeq))
