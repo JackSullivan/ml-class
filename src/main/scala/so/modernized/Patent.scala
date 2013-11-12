@@ -7,7 +7,7 @@ import cc.factorie.variable.CategoricalSeqDomain
 /**
  * @author John Sullivan
  */
-case class Patent(id:String, sections:Iterable[String], claims:Iterable[String], abs:String, desc:String) {
+case class Patent(id:String, sections:Iterable[String], claims:Iterable[String], abs:String, desc:String,title:String) {
   def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc)
 }
 
@@ -19,7 +19,8 @@ object Patent {
         (claimNode \ "claim-text").text
     },
     (patentXML \ "abstract").text,
-    (patentXML \ "description").text
+    (patentXML \ "description").text,
+    (patentXML \ "invention-title").text
   )
 }
 
