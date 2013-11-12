@@ -4,9 +4,8 @@ import cc.factorie.variable._
 import so.modernized.{PatentPipeline, Patent}
 import scala.collection.mutable.ArrayBuffer
 import cc.factorie.app.strings
-import cc.factorie.app.nlp.Document
 import cc.factorie._
-import cc.factorie.app.classify.{BatchLinearMultiClassTrainer, OnlineLinearMultiClassTrainer}
+import cc.factorie.app.classify.{ BatchLinearMultiClassTrainer}
 
 /**
  * User: cellier
@@ -16,16 +15,17 @@ import cc.factorie.app.classify.{BatchLinearMultiClassTrainer, OnlineLinearMulti
 class MaxEntExperiment {
   def train(patents:Iterable[Patent])(implicit random: scala.util.Random) {
     var docLabels = new ArrayBuffer[LabelTag]()
-    patents.foreach{ patent => docLabels += new PatentDescFeatures(patent).label }
-    val (trainVariables, testVariables) = docLabels.shuffle.split(0.5)
+    patents.foreach{ patent => docLabels += new PatentFeatures(patent).label }
+    val (trainVariables, testVariables) = docLabels.shuffle.split(0.70)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     PatentDomain.freeze()
-    val classifier = new OnlineLinearMultiClassTrainer().train(trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
+    val classifier = new BatchLinearMultiClassTrainer().train(trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
     (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.patent.value).bestLabelIndex)(null))
     val objective = HammingObjective
     println ("Train accuracy = "+ objective.accuracy(trainVariables.toSeq))
     println ("Test  accuracy = "+ objective.accuracy(testVariables.toSeq))
+
 
   }
 
@@ -42,17 +42,18 @@ class MaxEntExperiment {
     freeze()
   }
 
-  class PatentDescFeatures(patent:Patent) extends BinaryFeatureVectorVariable[String] {
+  class PatentFeatures(patent:Patent) extends BinaryFeatureVectorVariable[String] {
     def domain = PatentDomain
     val label = new LabelTag(this,patent.sections.head)
     override def skipNonCategories = true
+    //strings.alphaSegmenter(patent.abs).foreach{token => this += token}
     strings.alphaSegmenter(patent.desc).foreach{token => this += token}
-    strings.alphaSegmenter(patent.claims.reduce(_+_)).foreach{token => this += token}
-
+    //strings.alphaSegmenter(patent.claims.reduce(_+_)).foreach{token => this += token}
+    //strings.alphaSegmenter(patent.title).foreach{token => this += token}
     //println("Processing Patent: "+patent.id)
   }
 
-  class LabelTag(val patent:PatentDescFeatures,labelString:String) extends LabeledCategoricalVariable(labelString) {
+  class LabelTag(val patent:PatentFeatures,labelString:String) extends LabeledCategoricalVariable(labelString) {
     def domain = LabelDomain
   }
   object PatentDomain extends CategoricalVectorDomain[String]
