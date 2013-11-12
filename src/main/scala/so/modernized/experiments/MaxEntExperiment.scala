@@ -2,10 +2,9 @@ package so.modernized.experiments
 
 import cc.factorie.variable._
 import so.modernized.{PatentPipeline, Patent}
-import scala.collection.mutable.ArrayBuffer
 import cc.factorie.app.strings
 import cc.factorie._
-import cc.factorie.app.classify.{ BatchLinearMultiClassTrainer}
+import cc.factorie.app.classify.BatchOptimizingLinearVectorClassifierTrainer
 
 /**
  * User: cellier
@@ -14,17 +13,16 @@ import cc.factorie.app.classify.{ BatchLinearMultiClassTrainer}
  */
 class MaxEntExperiment {
   def train(patents:Iterable[Patent])(implicit random: scala.util.Random) {
-    var docLabels = new ArrayBuffer[LabelTag]()
-    patents.foreach{ patent => docLabels += new PatentFeatures(patent).label }
+    val docLabels = patents.map(patent => new PatentFeatures(patent).label)
     val (trainVariables, testVariables) = docLabels.shuffle.split(0.70)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     PatentDomain.freeze()
-    val classifier = new BatchLinearMultiClassTrainer().train(trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
+    val classifier = new BatchOptimizingLinearVectorClassifierTrainer().train[LabelTag, PatentFeatures](trainVariables, _.patent)
     (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.patent.value).bestLabelIndex)(null))
     val objective = HammingObjective
-    println ("Train accuracy = "+ objective.accuracy(trainVariables.toSeq))
-    println ("Test  accuracy = "+ objective.accuracy(testVariables.toSeq))
+    println ("Train accuracy = "+ objective.accuracy(trainVariables))
+    println ("Test  accuracy = "+ objective.accuracy(testVariables))
 
 
   }
