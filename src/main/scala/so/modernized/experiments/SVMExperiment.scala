@@ -5,7 +5,7 @@ import so.modernized.{PatentPipeline, Patent}
 import cc.factorie.variable.{HammingObjective, CategoricalVectorDomain, LabeledCategoricalVariable, BinaryFeatureVectorVariable}
 import cc.factorie.app.strings
 import scala.collection.mutable.ArrayBuffer
-import cc.factorie.app.classify.{LinearMultiClassClassifier, SVMMultiClassTrainer}
+import cc.factorie.app.classify.{SVMLinearVectorClassifierTrainer, LinearVectorClassifier}
 import cc.factorie._
 
 /**
@@ -22,15 +22,21 @@ class SVMExperiment{
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     PatentDomain.freeze()
+    val classifier = new LinearVectorClassifier[LabelTag, PatentFeatures](LabelDomain.dimensionSize, PatentDomain.dimensionSize, _.patent)
+    new SVMLinearVectorClassifierTrainer().train[LinearVectorClassifier[LabelTag, PatentFeatures], LabelTag, PatentFeatures](classifier, trainVariables, {l:LabelTag => l.patent})
 
+    //new SVMLinearVectorClassifierTrainer().train[LabelTag, PatentFeatures]()
+    /*
     def evaluate(cls: LinearMultiClassClassifier) {
       println(cls.weights.value.toSeq.count(x => x == 0).toFloat/cls.weights.value.length +" sparsity")
     }
     lazy val model = new LinearMultiClassClassifier(LabelDomain.size, PatentDomain.dimensionSize)
     val svm = new SVMMultiClassTrainer()
     svm.baseTrain(model,trainVariables.toSeq.map(_.labelInt),trainVariables.map(_.patent.value).toSeq,trainVariables.map(w => 1.0).toSeq,evaluate)// (trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
-    (trainVariables ++ testVariables).foreach(v => v.set(model.classification(v.patent.value).bestLabelIndex)(null))
+    */
+    (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.patent.value).bestLabelIndex)(null))
     val objective = HammingObjective
+
     println ("Train accuracy = "+ objective.accuracy(trainVariables.toSeq))
     println ("Test  accuracy = "+ objective.accuracy(testVariables.toSeq))
   }
@@ -79,6 +85,7 @@ class SVMExperiment{
       case "F" => 6
       case "G" => 7
       case "H" => 8
+      case "N" => 9
     }
     def domain = LabelDomain
   }
@@ -89,7 +96,7 @@ class SVMExperiment{
 object SVMExperiment {
   def main(args: Array[String]){
     val svm = new SVMExperiment()
-    svm.train(PatentPipeline("data/").toSeq)(random)
+    svm.train(PatentPipeline("data/").toList)(random)
 
 
   }
