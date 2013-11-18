@@ -50,16 +50,16 @@ class SVMExperiment{
 
   class PatentFeatures(patent:Patent) extends BinaryFeatureVectorVariable[String] {
     def domain = PatentDomain
-    val labelInt = patent.sections.head match {
-      case "A" => 1
-      case "B" => 2
-      case "C" => 3
-      case "D" => 4
-      case "E" => 5
-      case "F" => 6
-      case "G" => 7
-      case "H" => 8
-    }
+//    val labelInt = patent.sections.head match {
+//      case "A" => 1
+//      case "B" => 2
+//      case "C" => 3
+//      case "D" => 4
+//      case "E" => 5
+//      case "F" => 6
+//      case "G" => 7
+//      case "H" => 8
+//    }
     val label = new LabelTag(this,patent.sections.head)
     override def skipNonCategories = true
     //strings.alphaSegmenter(patent.abs).foreach{token => this += token}
