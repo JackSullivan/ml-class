@@ -11,7 +11,7 @@ import cc.factorie.app.classify.BatchOptimizingLinearVectorClassifierTrainer
  */
 object MaxEntExperiment extends ClassifierExperiment {
 
-  val trainer = new BatchOptimizingLinearVectorClassifierTrainer()
+  val trainer = new BatchOptimizingLinearVectorClassifierTrainer()(random)
 
   def main(args: Array[String]){
     MaxEntExperiment.runExperiment(PatentPipeline("data/").toList)(random)

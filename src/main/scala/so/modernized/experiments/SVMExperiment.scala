@@ -11,7 +11,7 @@ import cc.factorie._
  */
 object SVMExperiment extends ClassifierExperiment{
 
-  val trainer = new SVMLinearVectorClassifierTrainer()
+  val trainer = new SVMLinearVectorClassifierTrainer()(random)
 
   def main(args: Array[String]){
     SVMExperiment.runExperiment(PatentPipeline("data/").toList)(random)
