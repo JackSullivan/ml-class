@@ -23,19 +23,7 @@ object MyXML extends XMLLoader[Elem] {
 object PatentReader {
   def apply(stream:InputStream):Iterator[Elem] = Source.fromInputStream(stream).getLines().toStream.split(_ != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>").map{
     patentIter =>
-      MyXML.loadString(patentIter.mkString("\n"))
-  }
-
-  def readFile(filename:String):Iterator[Elem] = Source.fromFile(filename).getLines().toStream.split(_ != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>").map{
-    patentIter =>
-      MyXML.loadString(patentIter.mkString("\n"))
-  }
-
-  def main(args:Array[String]) {
-    val r = PatentReader.readFile("ipg120828.xml")
-    val fR = r.filter(doc => (doc  \ "us-bibliographic-data-grant" \ "classifications-ipcr").nonEmpty)
-
-    println((fR.next() \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text})
+      MyXML.loadString(patentIter.mkString("\n").replaceAll("""<\?[^\?]+\?>""", ""))
   }
 }
 

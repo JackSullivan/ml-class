@@ -61,7 +61,7 @@ class MaxEntExperiment {
 object MaxEntExperiment {
   def main(args: Array[String]){
     val MaxEnt = new MaxEntExperiment()
-    MaxEnt.train(PatentPipeline("data/").toSeq)(random)
+    MaxEnt.train(PatentPipeline("data/").toList)(random)
 
 
   }
