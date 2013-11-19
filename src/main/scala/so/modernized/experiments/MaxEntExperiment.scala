@@ -4,7 +4,7 @@ import cc.factorie.variable._
 import so.modernized.{PatentPipeline, Patent}
 import cc.factorie.app.strings
 import cc.factorie._
-import cc.factorie.app.classify.BatchOptimizingLinearVectorClassifierTrainer
+import cc.factorie.app.classify.{BatchOptimizingLinearVectorClassifierTrainer}
 
 /**
  * User: cellier

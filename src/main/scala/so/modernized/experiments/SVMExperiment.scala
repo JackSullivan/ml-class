@@ -5,7 +5,7 @@ import so.modernized.{PatentPipeline, Patent}
 import cc.factorie.variable.{HammingObjective, CategoricalVectorDomain, LabeledCategoricalVariable, BinaryFeatureVectorVariable}
 import cc.factorie.app.strings
 import scala.collection.mutable.ArrayBuffer
-import cc.factorie.app.classify.{LinearMultiClassClassifier, SVMMultiClassTrainer}
+import cc.factorie.app.classify.{BatchOptimizingLinearVectorClassifierTrainer, SVMLinearVectorClassifierTrainer}
 import cc.factorie._
 
 /**
@@ -18,18 +18,21 @@ class SVMExperiment{
   def train(patents:Iterable[Patent])(implicit random: scala.util.Random) {
     var docLabels = new ArrayBuffer[LabelTag]()
     patents.foreach{ patent => docLabels += new PatentFeatures(patent).label }
-    val (trainVariables, testVariables) = docLabels.shuffle.split(0.70)
+    val (fullTrainVariables, testVariables) = docLabels.shuffle.split(0.95)
+    val (trainVariables,extraTrainVariables) = fullTrainVariables.split(0.1)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
+    println("Train Patents: " + trainVariables.length)
+    println("Test Patents: " + testVariables.length)
     println("Features Generated: Starting Training")
     PatentDomain.freeze()
 
-    def evaluate(cls: LinearMultiClassClassifier) {
-      println(cls.weights.value.toSeq.count(x => x == 0).toFloat/cls.weights.value.length +" sparsity")
+    def evaluate(cls: BatchOptimizingLinearVectorClassifierTrainer) {
+    //  println(cls.weights.value.toSeq.count(x => x == 0).toFloat/cls.weights.value.length +" sparsity")
     }
-    lazy val model = new LinearMultiClassClassifier(LabelDomain.size, PatentDomain.dimensionSize)
-    val svm = new SVMMultiClassTrainer()
-    svm.baseTrain(model,trainVariables.toSeq.map(_.labelInt),trainVariables.map(_.patent.value).toSeq,trainVariables.map(w => 1.0).toSeq,evaluate)// (trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
-    (trainVariables ++ testVariables).foreach(v => v.set(model.classification(v.patent.value).bestLabelIndex)(null))
+    //lazy val model = new LinearMultiClassClassifier(LabelDomain.size, PatentDomain.dimensionSize)
+    val svm = new SVMLinearVectorClassifierTrainer()
+   // svm.(model,trainVariables.toSeq.map(_.labelInt),trainVariables.map(_.patent.value).toSeq,trainVariables.map(w => 1.0).toSeq,evaluate)// (trainVariables.toSeq,trainVariables.map(_.patent).toSeq)
+    //(trainVariables ++ testVariables).foreach(v => v.set(model.classification(v.patent.value).bestLabelIndex)(null))
     val objective = HammingObjective
     println ("Train accuracy = "+ objective.accuracy(trainVariables.toSeq))
     println ("Test  accuracy = "+ objective.accuracy(testVariables.toSeq))
