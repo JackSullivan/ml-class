@@ -15,20 +15,12 @@ object PatentPipeline {
       .filter(_.toString.endsWith(".zip")) // todo this is bad
       .flatMap{filePath =>
       val zipFile = new ZipFile(filePath.toFile)
-      zipFile.entries().asScala.flatMap{zipEntry =>
+      zipFile.entries().asScala.toStream.flatMap{zipEntry =>
         PatentReader(zipFile.getInputStream(zipEntry))
       }
     }
     case nonPath => throw new FileNotFoundException("%s is not a valid directory path" format nonPath.getFileName)
   }
 
-  def apply(dir:String):Iterator[Patent] = PatentFilters(fromDir(dir)).map{Patent.fromXML}
-
-  def main(args:Array[String]) {
-    val patentsXML = PatentPipeline.fromDir("data/")
-    val x = patentsXML.next()
-    println(patentsXML.next() \ "us-bibliographic-data-grant")
-
-
-  }
+  def apply(dir:String):Iterator[Patent] = fromDir(dir).flatMap(PatentFilters.apply).map{Patent.fromXML}
 }
