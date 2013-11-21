@@ -12,7 +12,8 @@ import cc.factorie.variable.HammingObjective
 trait ClassifierExperiment {
   def trainer:LinearVectorClassifierTrainer
   def toLabel:(Patent => Patent.Label)
-  def runExperiment(patents:Iterable[Patent], testSplit:Double = 0.7)(implicit random:Random) {
+  def methodName:String
+  def runExperiment(patents:Iterable[Patent], testSplit:Double = 0.7)(implicit random:Random):ExperimentResult = {
     val (trainVariables, testVariables) = patents.map(toLabel).shuffle.split(testSplit)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
@@ -20,20 +21,27 @@ trait ClassifierExperiment {
 
     val classifier = trainer.train(Patent.classifier(trainVariables.head), trainVariables, {l:Patent.Label => l.features})
     (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.features.value).bestLabelIndex)(null))
+
     val objective = HammingObjective
-    println ("Train accuracy = "+ objective.accuracy(trainVariables))
-    println ("Test  accuracy = "+ objective.accuracy(testVariables))
+
+    //println ("Train accuracy = "+ objective.accuracy(trainVariables))
+    //println ("Test  accuracy = "+ objective.accuracy(testVariables))
+    ExperimentResult(methodName, objective.accuracy(trainVariables), objective.accuracy(testVariables))
   }
 }
+case class ExperimentResult(method:String, trainAccuracy: Double, testAccuracy: Double)
 
 class MaxEntExperiment(val toLabel:(Patent => Patent.Label)) extends ClassifierExperiment {
+  def methodName = "MaxEnt"
   val trainer = new BatchOptimizingLinearVectorClassifierTrainer()(random)
 }
 
 class NaiveBayesExperiment(val toLabel:(Patent => Patent.Label)) extends ClassifierExperiment {
+  def methodName = "Naive Bayes"
   val trainer = new NaiveBayesClassifierTrainer()
 }
 
 class SVMExperiment(val toLabel:(Patent => Patent.Label)) extends ClassifierExperiment {
+  def methodName = "SVM"
   val trainer = new SVMLinearVectorClassifierTrainer()(random)
 }
