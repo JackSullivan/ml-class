@@ -8,6 +8,8 @@ import java.io.{FileWriter, BufferedWriter}
 import cc.factorie.app.classify.LinearVectorClassifier
 import scala.collection.mutable
 import cc.factorie.la.Tensor1
+import cc.factorie.app.nlp.lexicon.StopWords
+
 /*
 import scala.pickling._
 import json._
@@ -25,9 +27,9 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSection:String,cl
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
-  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).toSeq
-  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).toSeq)
-  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).toSeq
+  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(StopWords.contains).toSeq
+  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(StopWords.contains).toSeq)
+  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(StopWords.contains).toSeq
   def asVectorString(docNumber:Int) = iprcLabel.features.value.activeElements.map { case (index, value) =>
     "%d %d %.3f".format(docNumber + 1, index + 1, value)
   }.mkString("\n")
@@ -75,6 +77,7 @@ object Patent {
   class Label(val features:Features, labelString:String, val domain: CategoricalDomain[String]) extends LabeledCategoricalVariable[String](labelString)
 
   class Features(features:Iterable[String]) extends BinaryFeatureVectorVariable[String] {
+    this ++= features
     def domain = Patent.FeatureDomain
 
   }
