@@ -45,7 +45,7 @@ object Patent {
   def classifier(label:Label):LinearVectorClassifier[Label, Features] = new LinearVectorClassifier[Label, Features](label.domain.dimensionSize, FeatureDomain.dimensionSize, _.features)
 
   object CPCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H", "N")
+    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H")
     freeze()
   }
 
@@ -55,7 +55,7 @@ object Patent {
   }
 
   object USPCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("1", "B", "C", "D", "E", "F", "G", "H", "N")
+    this ++= Vector("1", "2", "3", "4", "5", "6", "7", "8", "9","D")
   }
 
   object UnsupervisedLabelDomain extends CategoricalDomain[String] {
@@ -68,6 +68,7 @@ object Patent {
   class Label(val features:Features, labelString:String, val domain: CategoricalDomain[String]) extends LabeledCategoricalVariable[String](labelString)
 
   class Features(features:Iterable[String]) extends BinaryFeatureVectorVariable[String] {
+    this ++= features
     def domain = Patent.FeatureDomain
 
   }

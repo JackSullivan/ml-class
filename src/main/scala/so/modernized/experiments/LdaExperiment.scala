@@ -1,28 +1,27 @@
 package so.modernized.experiments
 
 import so.modernized.{Patent, PatentPipeline}
-import cc.factorie.variable.{DiscreteSeqVariable, DiscreteSeqDomain, DiscreteDomain, CategoricalSeqDomain}
+import cc.factorie.variable.{CategoricalSeqDomain}
 import cc.factorie.app.topics.lda.{Document, LDA}
 import cc.factorie.random
 import scala.util.Random
 import cc.factorie.directed.DirectedModel
 import java.io._
 import scala.util.control.Breaks._
-import cc.factorie.app.bib.LDAUtils.WordSeqDomain
 import scala.Predef._
-import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
-
 /**
  * User: cellier
  * Date: 10/29/13
  * Time: 4:03 PM
  */
 
+//implicit object WordDomain extends CategoricalSeqDomain[String]
 object WordDomain extends CategoricalSeqDomain[String]
-class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val random:Random) {
-  def this(patents:Iterable[Patent])(implicit random:Random) = this(patents, {
-    val lda = new LDA(WordDomain, 8)(DirectedModel(), random)
 
+import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
+class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val random:Random) {
+  def this(patents:Iterable[Patent])(implicit random:Random)= this(patents, {
+    val lda = new LDA(WordDomain, 8)(DirectedModel(), random)
     patents.foreach(patent => {
       val doc = patent.asLDADocument(WordDomain)
       lda.addDocument(doc,random)
@@ -42,9 +41,9 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val rand
       reader.readLine() // consume delimiting newline
     } else reader.reset() // Put the reader back to the read position when reader.mark was called
     breakable { while (true) {
-      val doc = new Document(WordSeqDomain, "", Nil) // doc.name will be set in doc.readNameWordsZs
+      val doc = new Document(WordDomain, "", Nil) // doc.name will be set in doc.readNameWordsZs
       doc.zs = new lda.Zs(Nil)
-      lda.addDocument(doc, random) // Skip documents that have only one word because inference can't handle them
+      if (doc.length > 1) lda.addDocument(doc, random) // Skip documents that have only one word because inference can't handle them
     }}
     reader.close()
     lda.maximizePhisAndThetas()
@@ -67,7 +66,6 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val rand
 
 object LDAExperiment{
   def main(args:Array[String]){
-    val ldaEx = new LDAExperiment(PatentPipeline("data/").toList,"LDAModel.so")(random)
-    MaxEntExperiment.runExperiment(ldaEx.patents.map(_.unsupervisedLabel.get))(random)
+    MaxEntExperiment.runExperiment(new LDAExperiment(PatentPipeline("data/").toList)(random).patents.map(_.unsupervisedLabel.get))(random)
   }
 }
