@@ -3,17 +3,17 @@ package so.modernized.experiments
 import so.modernized.Patent
 import scala.util.Random
 import cc.factorie._
-import cc.factorie.app.classify.LinearVectorClassifierTrainer
+import cc.factorie.app.classify.{SVMLinearVectorClassifierTrainer, NaiveBayesClassifierTrainer, BatchOptimizingLinearVectorClassifierTrainer, LinearVectorClassifierTrainer}
 import cc.factorie.variable.HammingObjective
-import so.modernized.Patent.Label
 
 /**
  * @author John Sullivan
  */
 trait ClassifierExperiment {
   def trainer:LinearVectorClassifierTrainer
-  def runExperiment(patentLabels:Iterable[Label], testSplit:Double = 0.7)(implicit random:Random) {
-    val (trainVariables, testVariables) = patentLabels.shuffle.split(testSplit)
+  def toLabel:(Patent => Patent.Label)
+  def runExperiment(patents:Iterable[Patent], testSplit:Double = 0.7)(implicit random:Random) {
+    val (trainVariables, testVariables) = patents.map(toLabel).shuffle.split(testSplit)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     Patent.FeatureDomain.freeze()
@@ -24,5 +24,16 @@ trait ClassifierExperiment {
     println ("Train accuracy = "+ objective.accuracy(trainVariables))
     println ("Test  accuracy = "+ objective.accuracy(testVariables))
   }
+}
 
+class MaxEntExperiment(val toLabel:(Patent => Patent.Label)) extends ClassifierExperiment {
+  val trainer = new BatchOptimizingLinearVectorClassifierTrainer()(random)
+}
+
+class NaiveBayesExperiment(val toLabel:(Patent => Patent.Label)) extends ClassifierExperiment {
+  val trainer = new NaiveBayesClassifierTrainer()
+}
+
+class SVMExperiment(val toLabel:(Patent => Patent.Label)) extends ClassifierExperiment {
+  val trainer = new SVMLinearVectorClassifierTrainer()(random)
 }
