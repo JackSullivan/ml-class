@@ -29,6 +29,6 @@ class PatentRegularizer(number:Int, labelFunc:(Patent => Patent.Label)) {
 
 object PatentRegularizer {
   def main(args:Array[String]) {
-    val patents = new PatentRegularizer(200, _.label)(PatentPipeline("data/"))
+    val patents = new PatentRegularizer(200, _.iprcLabel)(PatentPipeline("data/"))
   }
 }

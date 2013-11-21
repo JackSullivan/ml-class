@@ -2,7 +2,7 @@ package so.modernized.experiments
 
 import so.modernized.PatentPipeline
 import cc.factorie._
-import cc.factorie.app.classify.BatchOptimizingLinearVectorClassifierTrainer
+import cc.factorie.app.classify.{BatchOptimizingLinearVectorClassifierTrainer}
 
 /**
  * User: cellier
@@ -14,6 +14,7 @@ object MaxEntExperiment extends ClassifierExperiment {
   val trainer = new BatchOptimizingLinearVectorClassifierTrainer()(random)
 
   def main(args: Array[String]){
-    MaxEntExperiment.runExperiment(PatentPipeline("data/").toList)(random)
+
+    MaxEntExperiment.runExperiment(PatentPipeline("data/").toList.map{_.iprcLabel})(random)
   }
 }

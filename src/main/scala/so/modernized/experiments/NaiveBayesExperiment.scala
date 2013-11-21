@@ -11,6 +11,6 @@ object NaiveBayesExperiment extends ClassifierExperiment {
   val trainer = new NaiveBayesClassifierTrainer()
 
   def main(args:Array[String]) {
-    NaiveBayesExperiment.runExperiment(PatentPipeline("data/").toList)(random)
+    NaiveBayesExperiment.runExperiment(PatentPipeline("data/").toList.map(_.iprcLabel))(random)
   }
 }

@@ -14,7 +14,7 @@ object SVMExperiment extends ClassifierExperiment{
   val trainer = new SVMLinearVectorClassifierTrainer()(random)
 
   def main(args: Array[String]){
-    SVMExperiment.runExperiment(PatentPipeline("data/").toList)(random)
+    SVMExperiment.runExperiment(PatentPipeline("data/").toList.map(_.iprcLabel))(random)
   }
 }
 
