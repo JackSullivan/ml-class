@@ -68,6 +68,6 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val rand
 object LDAExperiment{
   def main(args:Array[String]){
     val ldaEx = new LDAExperiment(PatentPipeline("data/").toList,"LDAModel.so")(random)
-    MaxEntExperiment.runExperiment(ldaEx.patents.map(_.unsupervisedLabel.get))(random)
+    //MaxEntExperiment.runExperiment(ldaEx.patents.map(_.unsupervisedLabel.get))(random)
   }
 }
