@@ -10,6 +10,7 @@ import java.io._
 import scala.util.control.Breaks._
 import cc.factorie.app.bib.LDAUtils.WordSeqDomain
 import scala.Predef._
+import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
 
 /**
  * User: cellier
@@ -18,19 +19,20 @@ import scala.Predef._
  */
 
 object WordDomain extends CategoricalSeqDomain[String]
-class LDAExperiment(patents:Iterator[Patent], ldaModel:LDA)(implicit val random:Random) {
-  def this(patents:Iterator[Patent])(implicit random:Random) = this(patents, {
+class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val random:Random) {
+  def this(patents:Iterable[Patent])(implicit random:Random) = this(patents, {
     val lda = new LDA(WordDomain, 8)(DirectedModel(), random)
+
     patents.foreach(patent => {
-      println(patent.id)
       val doc = patent.asLDADocument(WordDomain)
       lda.addDocument(doc,random)
       lda.inferDocumentTheta(doc)
     })
+
     println(lda.documents.size)
     lda.inferTopics()
     lda})(random)
-  def this(patents:Iterator[Patent],filename: String) =this(patents, {
+  def this(patents:Iterable[Patent],filename: String)(implicit random:Random) = this(patents, {
     val lda = new LDA(WordDomain, 8)(DirectedModel(),random)
     val reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename))))
     reader.mark(512)
@@ -58,16 +60,14 @@ class LDAExperiment(patents:Iterator[Patent], ldaModel:LDA)(implicit val random:
     lda.documents.foreach(_.writeNameWordsZs(pw))
     pw.close()
   }
-  val lda = ldaModel
-  lda.documents.map(doc => doc.thetaArray.zipWithIndex.maxBy(_._1)._2)
 
-
-
-
+  val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
+  patents.foreach(patent => patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,docLabels(patent.id).toString,UnsupervisedLabelDomain)))
 }
 
 object LDAExperiment{
   def main(args:Array[String]){
-    new LDAExperiment(PatentPipeline("data/"))(random)
+    val ldaEx = new LDAExperiment(PatentPipeline("data/").toList,"LDAModel.so")(random)
+    MaxEntExperiment.runExperiment(ldaEx.patents.map(_.unsupervisedLabel.get))(random)
   }
 }
