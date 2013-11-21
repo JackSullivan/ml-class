@@ -14,6 +14,7 @@ object MaxEntExperiment extends ClassifierExperiment {
   val trainer = new BatchOptimizingLinearVectorClassifierTrainer()(random)
 
   def main(args: Array[String]){
-    MaxEntExperiment.runExperiment(PatentPipeline("data/").toList)(random)
+
+    MaxEntExperiment.runExperiment(PatentPipeline("data/").toList.map{_.iprcLabel})(random)
   }
 }
