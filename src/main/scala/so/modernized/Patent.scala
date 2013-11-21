@@ -31,7 +31,7 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSection:String,cl
 object Patent {
   def fromXML(patentXML:Elem):Patent = Patent((patentXML \ "us-bibliographic-data-grant" \ "publication-reference" \ "document-id" \ "doc-number").text,
   (patentXML \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text},
-  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").text,
+  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").text.head.toString,
 
     (patentXML \ "claims" \ "claim").map{
     claimNode =>
