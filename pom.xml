@@ -76,6 +76,16 @@
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+            <jvmArgs>
+                <jvmArg>-Xms512m</jvmArg>
+                <jvmArg>-Xmx4g</jvmArg>
+            </jvmArgs>
+            <launchers>
+            <launcher>
+                <id>runSupervisedExperiments</id>
+                <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
+            </launcher>
+            </launchers>
         </configuration>
       </plugin>
       <plugin>
