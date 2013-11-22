@@ -25,6 +25,16 @@
           <name>dev-iesl.cs.umass.edu</name>
           <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/thirdparty/</url>
       </repository>
+      <repository>
+          <id>iesl.cs.umass.edu2</id>
+          <name>IESL repository</name>
+          <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public/</url>
+      </repository>
+      <repository>
+          <id>iesl.cs.umass.edu3</id>
+          <name>IESL repository</name>
+          <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public-snapshots/</url>
+      </repository>
   </repositories>
 
   <pluginRepositories>
