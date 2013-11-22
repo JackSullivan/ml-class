@@ -20,6 +20,11 @@
           <name>Sonatype Snapshots</name>
           <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
       </repository>
+      <repository>
+          <id>dev-iesl.cs.umass.edu</id>
+          <name>dev-iesl.cs.umass.edu</name>
+          <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/thirdparty/</url>
+      </repository>
   </repositories>
 
   <pluginRepositories>

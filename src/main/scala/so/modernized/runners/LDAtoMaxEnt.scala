@@ -14,7 +14,7 @@ object LDAtoMaxEnt {
 
     val patents = PatentPipeline(inDir).toList
     implicit val random = scala.util.Random
-    val ldaEx = new LDAExperiment(PatentPipeline("data/").toList)(random)
+    val ldaEx = new LDAExperiment(patents)(random)
     val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(ldaEx.patents)
     println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
   }
