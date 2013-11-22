@@ -21,19 +21,19 @@
           <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
       </repository>
       <repository>
-          <id>dev-iesl.cs.umass.edu</id>
-          <name>dev-iesl.cs.umass.edu</name>
-          <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/thirdparty/</url>
+        <id>dev-iesl.cs.umass.edu.thirdparty</id>
+        <name>IESL Third-Party</name>
+        <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/thirdparty/</url>
       </repository>
       <repository>
-          <id>iesl.cs.umass.edu2</id>
-          <name>IESL repository</name>
-          <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public/</url>
+        <id>iesl.cs.umass.edu.public</id>
+        <name>IESL Public</name>
+        <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public/</url>
       </repository>
       <repository>
-          <id>iesl.cs.umass.edu3</id>
-          <name>IESL repository</name>
-          <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public-snapshots/</url>
+        <id>iesl.cs.umass.edu.snapshots</id>
+        <name>IESL Snapshots</name>
+        <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public-snapshots/</url>
       </repository>
   </repositories>
 
