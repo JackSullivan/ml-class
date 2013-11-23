@@ -12,6 +12,24 @@
 
 \end{abstract}
 
-\section{}
+\section{Tables}
+\begin{table}[ht] 
+\caption{PCA Classification Results} % title of Table 
+\centering % used for centering table 
+\begin{tabular}{c c c c} % centered columns (4 columns) 
+\hline\hline %inserts double horizontal lines 
+PCA & MaxEnt\#1 & SVM\#2 & Naive Bayes\#3 \\ [0.5ex] % inserts table 
+%heading 
+\hline % inserts single horizontal line 
+3 & 29.2829 & 837 & 970 \\ % inserting body of the table 
+10 &  & 877 & 230 \\ 
+50 & 31 & 25 & 415 \\ 
+100 & 35 & 144 & 2356 \\ 
+1000 & 45 & 300 & 556 \\ [1ex] % [1ex] adds vertical space 
+\hline %inserts single line 
+\end{tabular} 
+\label{table:nonlin} % is used to refer this table in the text 
+\end{table} 
+
 
 \end{document}
