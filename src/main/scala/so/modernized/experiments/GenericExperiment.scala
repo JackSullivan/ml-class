@@ -47,10 +47,13 @@ object GenericExperiment {
   }
 
   def main(args:Array[String]) {
-
     implicit val random = Random
-    val max = new GenericExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random), "MaxEnt")
-
-    println(max.runExperiment(readCSV("compressed_data/PCA1000.csv")))
+    val files = Seq("compressed_data/Laplacian3.csv","compressed_data/Laplacian10.csv","compressed_data/Laplacian50.csv","compressed_data/Laplacian100.csv","compressed_data/Laplacian1000.csv")
+    val out = Seq("MaxEnt","SVM","NaiveBayes").flatMap{method => files.map{
+      file =>
+        val max = new GenericExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random),method)
+        max.runExperiment(readCSV(file))
+    }}
+    out.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
   }
 }
