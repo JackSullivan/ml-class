@@ -14,6 +14,6 @@ object IPRCExperimentRunner {
     implicit val random = scala.util.Random
 
     Seq(new MaxEntExperiment(_.iprcLabel), new SVMExperiment(_.iprcLabel), new SVMExperiment(_.iprcLabel))
-      .foreach {_.runExperiment(patents)}
+      .map {_.runExperiment(patents)}
   }
 }
