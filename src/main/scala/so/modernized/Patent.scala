@@ -82,7 +82,7 @@ object Patent {
 
   }
 
-  def writeSparseVector(patents:Iterator[Patent], labelFun:(Patent => Patent.Label), filename:String) {
+  def writeSparseVector(patents:Stream[Patent], labelFun:(Patent => Patent.Label), filename:String) {
     val outFilename = "%s.vec" format filename
     val labelFilename = "%s.label" format filename
     val wrt = new BufferedWriter(new FileWriter(outFilename))
