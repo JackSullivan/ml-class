@@ -82,7 +82,27 @@ object Patent {
 
   }
 
-  def writeSparseVector(filename:String, readDir:String, number:Int, labelFunc:(Patent => Patent.Label) = _.iprcLabel, tfidf:Boolean = false) {
+  def writeSparseVector(patents:Iterator[Patent], labelFun:(Patent => Patent.Label), filename:String) {
+    val outFilename = "%s.vec" format filename
+    val labelFilename = "%s.label" format filename
+    val wrt = new BufferedWriter(new FileWriter(outFilename))
+    val labelWrt = new BufferedWriter(new FileWriter(labelFilename))
+    Patent.FeatureDomain.freeze()
+    println("writing")
+    patents.zipWithIndex.foreach{ case (patent, index) =>
+      println(patent.asVectorString(index))
+      wrt.write(patent.asVectorString(index))
+      wrt.write("\n")
+      labelWrt.write("%d %d".format(index + 1, labelFun(patent).intValue + 1))
+      labelWrt.write("\n")
+    }
+    wrt.flush()
+    wrt.close()
+    labelWrt.flush()
+    labelWrt.close()
+  }
+
+  def writeSparseVector1(filename:String, readDir:String, number:Int, labelFunc:(Patent => Patent.Label) = _.iprcLabel, tfidf:Boolean = false) {
     val outFilename = "%s.vec" format filename
     val labelFilename = "%s.label" format filename
     val pipe = PatentPipeline(readDir)
@@ -181,7 +201,7 @@ object Patent {
   }
 
   def main(args:Array[String]) {
-    Patent.writeSparseVector("even", "data/", 200)
+    Patent.writeSparseVector1("even", "data/", 200)
   }
   /*
   def main2(args:Array[String]) {
