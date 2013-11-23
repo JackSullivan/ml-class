@@ -7,13 +7,21 @@ import scala.collection.mutable
  * takes a stream(iterator) of patents and draws until a given number of each label class are drawn. Warns if it gets to the end without the numbers
  */
 class PatentRegularizer(number:Int, labelFunc:(Patent => Patent.Label)) {
-  def apply(_patents:Stream[Patent]):Stream[Patent] = {
-    val patents = _patents.iterator
-    val dimensionSize = labelFunc(patents.next()).domain.dimensionSize
+  def apply(patents:Stream[Patent]):Stream[Patent] = {
+    //val patents = _patents.iterator
+    val dimensionSize = labelFunc(patents.head).domain.dimensionSize
     val patentBoxes = new mutable.ArrayBuffer[mutable.ArrayBuffer[Patent]](dimensionSize)
     (0 until dimensionSize).foreach{ idex =>
       patentBoxes += new mutable.ArrayBuffer[Patent](100)
     }
+    patents.takeWhile{ patent =>
+      val index = labelFunc(patent).intValue
+      if(patentBoxes(index).size < number) {
+        patentBoxes(index) += patent
+      }
+      !(0 until dimensionSize).foldLeft(true){case (running, idex) => running && patentBoxes(idex).size == number}
+    }
+    /*
     while (!(0 until dimensionSize).foldLeft(true){case (running, idex) => running && patentBoxes(idex).size == number} && patents.hasNext) {
       val patent = patents.next()
       val index = labelFunc(patent).intValue
@@ -21,6 +29,7 @@ class PatentRegularizer(number:Int, labelFunc:(Patent => Patent.Label)) {
         patentBoxes(index) += patent
       }
     }
+    */
     if(!(0 until dimensionSize).foldLeft(true){case (running, idex) => running && patentBoxes(idex).size == number}) {
       println("WARNING! we didn't find enough of every class")
     }
