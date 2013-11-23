@@ -10,8 +10,8 @@ import java.util.zip.ZipFile
  * @author John Sullivan
  */
 object PatentPipeline {
-  def fromDir(dir:String):Stream[Elem] = Paths.get(dir) match {
-    case path if Files.isDirectory(path) => Files.newDirectoryStream(path).iterator().asScala.toStream
+  def fromDir(dir:String):Iterator[Elem] = Paths.get(dir) match {
+    case path if Files.isDirectory(path) => Files.newDirectoryStream(path).iterator().asScala
       .filter(_.toString.endsWith(".zip")) // todo this is bad
       .flatMap{filePath =>
       val zipFile = new ZipFile(filePath.toFile)
@@ -22,5 +22,5 @@ object PatentPipeline {
     case nonPath => throw new FileNotFoundException("%s is not a valid directory path" format nonPath.getFileName)
   }
 
-  def apply(dir:String):Stream[Patent] = fromDir(dir).flatMap(PatentFilters.apply).map{Patent.fromXML}
+  def apply(dir:String):Iterator[Patent] = fromDir(dir).flatMap(PatentFilters.apply).map{Patent.fromXML}
 }
