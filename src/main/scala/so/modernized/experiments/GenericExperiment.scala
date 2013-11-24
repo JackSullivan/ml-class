@@ -48,20 +48,21 @@ object GenericExperiment {
 
   def main(args:Array[String]) {
     implicit val random = Random
-    val isofiles = Seq("compressed_data/ISOMap3.csv","compressed_data/ISOMap10.csv","compressed_data/ISOMap50.csv","compressed_data/ISOMap100.csv","compressed_data/ISOMap1000.csv")
-    val laplacianfiles = Seq("compressed_data/Laplacian3.csv","compressed_data/Laplacian10.csv","compressed_data/Laplacian50.csv","compressed_data/Laplacian100.csv","compressed_data/Laplacian1000.csv")
-    val pcafiles = Seq("compressed_data/PCA3.csv","compressed_data/PCA10.csv","compressed_data/PCA50.csv","compressed_data/PCA100.csv","compressed_data/PCA1000.csv")
+    val isofiles = (Seq("compressed_data/ISOMap3.csv","compressed_data/ISOMap10.csv","compressed_data/ISOMap50.csv","compressed_data/ISOMap100.csv","compressed_data/ISOMap1000.csv"),"ISOMap")
+    val laplacianfiles = (Seq("compressed_data/Laplacian3.csv","compressed_data/Laplacian10.csv","compressed_data/Laplacian50.csv","compressed_data/Laplacian100.csv","compressed_data/Laplacian1000.csv"),"Laplacian")
+    val pcafiles = (Seq("compressed_data/PCA3.csv","compressed_data/PCA10.csv","compressed_data/PCA50.csv","compressed_data/PCA100.csv","compressed_data/PCA1000.csv"),"PCA")
 
-    val out = Seq(isofiles,laplacianfiles,pcafiles).map{files => files.map{
+    val out = Seq(isofiles,laplacianfiles,pcafiles).map{files => (files._2,files._1.map{
       file =>
         (new GenericExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random),"Maxent").runExperiment(readCSV(file)),
        // new GenericExperiment(new NaiveBayesClassifierTrainer(),"NaiveBayes").runExperiment(readCSV(file)),
         new GenericExperiment(new SVMLinearVectorClassifierTrainer()(random),"Svm").runExperiment(readCSV(file))
       )
-    } }.map(_.seq.unzip)
-    out.foreach{compressionType =>
-      compressionType._1.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
-      compressionType._2.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+    }) }.map(t=> (t._1,t._2.seq.unzip))
+    out.foreach{case (compressionType,compressionResult) =>
+      println(compressionType)
+      compressionResult._1.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+      compressionResult._2.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
      // compressionType._3.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
     }
 
