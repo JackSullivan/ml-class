@@ -53,12 +53,12 @@ object Patent {
   def classifier(label:Label):LinearVectorClassifier[Label, Features] = new LinearVectorClassifier[Label, Features](label.domain.dimensionSize, FeatureDomain.dimensionSize, _.features)
 
   object CPCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H", "N")
+    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H", "Y")
     freeze()
   }
 
   object IPRCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H", "Y")
+    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H")
     freeze()
   }
 
