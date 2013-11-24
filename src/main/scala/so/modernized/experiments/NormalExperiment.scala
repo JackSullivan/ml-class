@@ -5,6 +5,7 @@ import cc.factorie.variable._
 import cc.factorie.app.classify._
 import scala.util.Random
 import so.modernized.{PatentPipeline, Patent}
+import java.io.File
 
 
 /**
@@ -39,7 +40,11 @@ object NormalExperiment {
     val out = Seq(max,svm,naivebayes).map{method =>
       method.runExperiment(patentLabels.toList)
     }
-    out.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+    val pw = new java.io.PrintWriter(new File("/output/supervisedExperiments"))
+    try {
+      out.foreach(t=> pw.write(t.trainAccuracy + "," + t.testAccuracy))
+      )
+    } finally pw.close()
 
   }
 }
