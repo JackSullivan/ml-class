@@ -2,7 +2,7 @@ package so.modernized.experiments
 
 import cc.factorie._
 import cc.factorie.variable._
-import cc.factorie.app.classify.{BatchOptimizingLinearVectorClassifierTrainer, LinearVectorClassifier, LinearVectorClassifierTrainer}
+import cc.factorie.app.classify._
 import scala.util.Random
 import scala.io.Source
 
@@ -48,12 +48,23 @@ object GenericExperiment {
 
   def main(args:Array[String]) {
     implicit val random = Random
-    val files = Seq("compressed_data/Laplacian3.csv","compressed_data/Laplacian10.csv","compressed_data/Laplacian50.csv","compressed_data/Laplacian100.csv","compressed_data/Laplacian1000.csv")
-    val out = Seq("MaxEnt","SVM","NaiveBayes").flatMap{method => files.map{
+    val isofiles = Seq("compressed_data/ISOMap3.csv","compressed_data/ISOMap10.csv","compressed_data/ISOMap50.csv","compressed_data/ISOMap100.csv","compressed_data/ISOMap1000.csv")
+    val laplacianfiles = Seq("compressed_data/Laplacian3.csv","compressed_data/Laplacian10.csv","compressed_data/Laplacian50.csv","compressed_data/Laplacian100.csv","compressed_data/Laplacian1000.csv")
+    val pcafiles = Seq("compressed_data/PCA3.csv","compressed_data/PCA10.csv","compressed_data/PCA50.csv","compressed_data/PCA100.csv","compressed_data/PCA1000.csv")
+
+    val out = Seq(isofiles,laplacianfiles,pcafiles).map{files => files.map{
       file =>
-        val max = new GenericExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random),method)
-        max.runExperiment(readCSV(file))
-    }}
-    out.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+        (new GenericExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random),"Maxent").runExperiment(readCSV(file)),
+       // new GenericExperiment(new NaiveBayesClassifierTrainer(),"NaiveBayes").runExperiment(readCSV(file)),
+        new GenericExperiment(new SVMLinearVectorClassifierTrainer()(random),"Svm").runExperiment(readCSV(file))
+      )
+    } }.map(_.seq.unzip)
+    out.foreach{compressionType =>
+      compressionType._1.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+      compressionType._2.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+     // compressionType._3.foreach(t=> println(t.trainAccuracy + "," + t.testAccuracy))
+    }
+
+
   }
 }
