@@ -95,6 +95,14 @@
                 <id>runSupervisedExperiments</id>
                 <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
             </launcher>
+                <launcher>
+                    <id>runLDAExperiments</id>
+                    <mainClass>so.modernized.runners.LDAtoMaxEnt</mainClass>
+                </launcher>
+                <launcher>
+                    <id>runNormalExperiment</id>
+                    <mainClass>so.modernized.runners.NormalExperiment</mainClass>
+                </launcher>
             </launchers>
         </configuration>
       </plugin>
