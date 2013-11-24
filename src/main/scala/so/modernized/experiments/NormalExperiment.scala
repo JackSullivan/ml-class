@@ -43,7 +43,6 @@ object NormalExperiment {
     val pw = new java.io.PrintWriter(new File("/output/supervisedExperiments"))
     try {
       out.foreach(t=> pw.write(t.trainAccuracy + "," + t.testAccuracy))
-      )
     } finally pw.close()
 
   }
