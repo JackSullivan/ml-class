@@ -1,7 +1,7 @@
 package so.modernized.runners
 
 import so.modernized.PatentPipeline
-import so.modernized.experiments.{LDAExperiment, MaxEntExperiment}
+import so.modernized.experiments.{EvaluateLDA, LDAExperiment, MaxEntExperiment}
 
 /**
  * User: cellier
@@ -14,7 +14,8 @@ object LDAtoMaxEnt {
 
     val patents = PatentPipeline(inDir).toList
     implicit val random = scala.util.Random
-    val ldaEx = new LDAExperiment(patents)(random)
+    val ldaEx = new LDAExperiment(patents,8)(random)
+    new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
     val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(ldaEx.patents)
     println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
   }

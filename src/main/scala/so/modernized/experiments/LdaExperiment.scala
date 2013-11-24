@@ -19,12 +19,13 @@ import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
  */
 
 object WordDomain extends CategoricalSeqDomain[String]
-class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val random:Random) {
-  def this(patents:Iterable[Patent])(implicit random:Random) = this(patents, {
-    val lda = new LDA(WordDomain, 8)(DirectedModel(), random)
+class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int = 8)(implicit val random:Random) {
+  def this(patents:Iterable[Patent], numTopics: Int = 8)(implicit random:Random) = this(patents, {
+    val lda = new LDA(WordDomain, numTopics)(DirectedModel(), random)
 
     patents.foreach(patent => {
       val doc = patent.asLDADocument(WordDomain)
+      println(patent.id)
       lda.addDocument(doc,random)
       lda.inferDocumentTheta(doc)
     })
@@ -63,6 +64,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val rand
 
   val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
   patents.foreach(patent => patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,docLabels(patent.id).toString,UnsupervisedLabelDomain)))
+  println(patents.size)
 }
 
 object LDAExperiment{
