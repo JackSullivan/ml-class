@@ -101,7 +101,7 @@
                 </launcher>
                 <launcher>
                     <id>runNormalExperiment</id>
-                    <mainClass>so.modernized.runners.NormalExperiment</mainClass>
+                    <mainClass>so.modernized.experiments.NormalExperiment</mainClass>
                 </launcher>
             </launchers>
         </configuration>
