@@ -27,7 +27,7 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSection:String,cl
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
-  private val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(StopWords.contains).toSeq
+  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(StopWords.contains).toSeq
   private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(StopWords.contains).toSeq)
   private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(StopWords.contains).toSeq
   def asVectorString(docNumber:Int) = iprcLabel.features.value.activeElements.map { case (index, value) =>
