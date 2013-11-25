@@ -19,11 +19,13 @@ import json._
 /**
  * @author John Sullivan
  */
-case class Patent(id:String,iprcSections:Iterable[String], uspcSection:String,claims:Iterable[String], abs:String, desc:String,title:String) {
+case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable[String],claims:Iterable[String], abs:String, desc:String,title:String) {
   def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc)
 
+  //println("Initialized Patent: %s" format id)
+
   lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedDesc), iprcSections.head, Patent.IPRCLabelDomain)
-  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedDesc), uspcSection, Patent.USPCLabelDomain)
+  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedDesc), uspcSections.head, Patent.USPCLabelDomain)
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
@@ -39,7 +41,7 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSection:String,cl
 object Patent {
   def fromXML(patentXML:Elem):Patent = Patent((patentXML \ "us-bibliographic-data-grant" \ "publication-reference" \ "document-id" \ "doc-number").text,
   (patentXML \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text},
-  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").text.head.toString,
+  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").map{_.text},
 
     (patentXML \ "claims" \ "claim").map{
     claimNode =>
@@ -201,7 +203,7 @@ object Patent {
   }
 
   def main(args:Array[String]) {
-    Patent.writeSparseVector1("even", "data/", 200)
+    Patent.writeSparseVector1("even", "data/", -1)
   }
   /*
   def main2(args:Array[String]) {
