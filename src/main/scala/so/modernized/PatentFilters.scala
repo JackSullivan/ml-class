@@ -9,7 +9,7 @@ import cc.factorie.variable.CategoricalVariable
 object PatentFilters {
   val filters:Seq[Elem => Boolean] = Seq(
     x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr").nonEmpty,
-    x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text}.forall(t=>Patent.IPRCLabelDomain.map(_.toString()).contains(t)),
+   // x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text}.forall(t=>Patent.IPRCLabelDomain.map(_.toString()).contains(t)),
     x => (x \ "abstract").nonEmpty,
     x => (x \ "description").nonEmpty
   )

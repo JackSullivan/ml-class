@@ -15,9 +15,10 @@ import java.io.File
  */
 
 class NormalExperiment(trainer:LinearVectorClassifierTrainer, methodName:String) {
-  def runExperiment(labels:Iterable[Patent.Label], testSplit:Double = 0.7)(implicit random:Random):ExperimentResult = {
-    val (trainVariables, testVariables) = labels.shuffle.split(0.7)
-    (trainVariables ++ testVariables).foreach(_.setRandomly)
+  def runExperiment(patents:Iterable[Patent], testSplit:Double = 0.7)(implicit random:Random):ExperimentResult = {
+    val (trainVariables, testVariables) = patents.map(patent => patent.iprcLabel).shuffle.split(0.7)
+    println(trainVariables.size)
+    //(trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     trainVariables.head.features.domain.freeze()
     println(trainVariables.size)
@@ -32,13 +33,14 @@ class NormalExperiment(trainer:LinearVectorClassifierTrainer, methodName:String)
 object NormalExperiment {
   def main(args:Array[String]){
     implicit val random = Random
-    val patentLabels = PatentPipeline("data/").toList.map{_.iprcLabel}
+    val patents = PatentPipeline("data/").toList
+    println(patents.size)
     val max = new NormalExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random),"Maxent")
     val naivebayes = new NormalExperiment(new NaiveBayesClassifierTrainer(),"NaiveBayes")
     val svm = new NormalExperiment(new SVMLinearVectorClassifierTrainer()(random),"Svm")
 
     val out = Seq(max,svm,naivebayes).map{method =>
-      method.runExperiment(patentLabels.toList)
+      method.runExperiment(patents)
     }
     val pw = new java.io.PrintWriter(new File("/output/supervisedExperiments"))
     try {
