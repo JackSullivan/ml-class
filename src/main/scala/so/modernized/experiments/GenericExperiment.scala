@@ -2,20 +2,27 @@ package so.modernized.experiments
 
 import cc.factorie._
 import cc.factorie.variable._
-import cc.factorie.app.classify.{BatchOptimizingLinearVectorClassifierTrainer, LinearVectorClassifier, LinearVectorClassifierTrainer}
+import cc.factorie.app.classify._
 import scala.util.Random
 import scala.io.Source
 
 /**
  * @author John Sullivan
  */
+
+
 object GenericLabelDomain extends CategoricalDomain[String]
 class GenericFeatureDomain(featList:Iterable[Any]) extends DiscreteDomain(featList)
+class FeatureVectorVariable(features:Iterable[Double], _domain:GenericFeatureDomain) extends VectorVariable(new DenseTensor1(features.toArray)) {
+  def domain = _domain
+
+  def newValues(fValues:Iterable[Double]):FeatureVectorVariable = new FeatureVectorVariable(fValues, _domain)
+}
 class GenericLabel(label:String, featureList:Iterable[Double], featureDomain:GenericFeatureDomain) extends LabeledCategoricalVariable[String](label) {
   def domain = GenericLabelDomain
-  def features = new VectorVariable(new DenseTensor1(featureList.toArray)){
-      def domain: VectorDomain = featureDomain
-    }
+
+  lazy val _features = new FeatureVectorVariable(featureList, featureDomain)
+  def features = _features
 }
 
 class GenericExperiment(trainer:LinearVectorClassifierTrainer, methodName:String) {
@@ -49,8 +56,9 @@ object GenericExperiment {
   def main(args:Array[String]) {
 
     implicit val random = Random
-    val max = new GenericExperiment(new BatchOptimizingLinearVectorClassifierTrainer()(random), "MaxEnt")
+    val max = new GenericExperiment(new NaiveBayesClassifierTrainer(), "NB")
 
-    println(max.runExperiment(readCSV("compressed_data/PCA1000.csv")))
+    val labels = readCSV("compressed_data/PCA1000.csv")
+    println(max.runExperiment(labels))
   }
 }
