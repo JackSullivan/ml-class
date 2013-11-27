@@ -41,7 +41,7 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 object Patent {
   def fromXML(patentXML:Elem):Patent = Patent((patentXML \ "us-bibliographic-data-grant" \ "publication-reference" \ "document-id" \ "doc-number").text,
   (patentXML \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text},
-  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").map{_.text},
+  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").map{_.text.head.toString},
 
     (patentXML \ "claims" \ "claim").map{
     claimNode =>
@@ -89,7 +89,6 @@ object Patent {
     val labelFilename = "%s.label" format filename
     val wrt = new BufferedWriter(new FileWriter(outFilename))
     val labelWrt = new BufferedWriter(new FileWriter(labelFilename))
-    Patent.FeatureDomain.freeze()
     println("writing")
     patents.zipWithIndex.foreach{ case (patent, index) =>
       println(patent.asVectorString(index))

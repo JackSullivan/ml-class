@@ -20,8 +20,9 @@ object PatentFilters {
   val filters:Seq[Filter] = Seq(
     new Filter(x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr"), _.nonEmpty, "cpc_nonempty"),
     new Filter(x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section"), _.map{_.text}.forall(Set("A", "B", "C", "D", "E", "F", "G", "H", "Y").contains), "cpc_in_domain"),
-    new Filter(x => (x \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification"), _.nonEmpty, "uspto_nonempty"),
-    new Filter(x => (x \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification"), s => Set("1", "B", "C", "D", "E", "F", "G", "H", "N").contains(s.text.head.toString), "uspto_in_domain"), //todo this is rejecting too many things to start with
+    //new Filter(x => (x \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification"), _.nonEmpty, "uspto_nonempty"),
+    //new Filter(x => (x \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification"), s => Set("1", "B", "C", "D", "E", "F", "G", "H", "N").contains(s.text.head.toString), "uspto_in_domain"), //todo this is rejecting too many things to start with
+    //new Filter(x => (x \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section"), s => s.map{_.text}.head != "D", "is_d"),
     new Filter(x => (x \ "abstract"), _.nonEmpty, "abstract_nonempty"),
     new Filter(x => (x \ "description"), _.nonEmpty, "desc_nonempty")
   )
