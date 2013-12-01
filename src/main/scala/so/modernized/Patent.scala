@@ -29,13 +29,26 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
-  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(StopWords.contains).toSeq
-  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(StopWords.contains).toSeq)
-  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(StopWords.contains).toSeq
+  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(PatentStopWords.contains).toSeq
+  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
+  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
   def asVectorString(docNumber:Int) = iprcLabel.features.value.activeElements.map { case (index, value) =>
     "%d %d %.3f".format(docNumber + 1, index + 1, value)
   }.mkString("\n")
 
+}
+
+object PatentStopWords extends StopWords.type{
+  this ++=
+    """fig
+       invention
+       patent
+       figure
+       section
+       claim
+       diagram
+       picture
+    """
 }
 
 object Patent {
@@ -65,7 +78,7 @@ object Patent {
   }
 
   object USPCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("1", "B", "C", "D", "E", "F", "G", "H", "N")
+    this ++= Vector("1", "2", "3", "4", "5", "6", "7", "8", "9","0","D")
     freeze()
   }
 

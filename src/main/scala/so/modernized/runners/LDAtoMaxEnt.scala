@@ -15,8 +15,11 @@ object LDAtoMaxEnt {
     val patents = PatentPipeline(inDir).toList
     implicit val random = scala.util.Random
     val ldaEx = new LDAExperiment(patents,8)(random)
+    ldaEx.saveModel("LDAExperiment.model")
     new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
     val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(ldaEx.patents)
     println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
+  //  val multiclassPatents = ldaEx.getMultiClassPatents()
+   // println("MultiClass Patents Labeled with Multiple Classes: " + multiclassPatents.map(_.))
   }
 }

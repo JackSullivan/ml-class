@@ -9,6 +9,7 @@ import so.modernized.Patent.Label
  * Time: 12:46 PM
  */
 class EvaluateLDA(patents: Iterable[Patent], numTopics: Int) {
+  println("Evaluating LDA Topics")
   val patentTopicGroups = patents.groupBy(_.unsupervisedLabel.get).map{
     topic => new TopicResult(topic._1,topic._2,topic._2.groupBy(_.iprcLabel).mapValues(_.size.toDouble))
   }

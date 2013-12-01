@@ -2,7 +2,7 @@ package so.modernized.experiments
 
 import so.modernized.{Patent, PatentPipeline}
 import cc.factorie.variable.{DiscreteSeqVariable, DiscreteSeqDomain, DiscreteDomain, CategoricalSeqDomain}
-import cc.factorie.app.topics.lda.{Document, LDA}
+import cc.factorie.app.topics.lda.{Doc, Document, LDA}
 import cc.factorie.random
 import scala.util.Random
 import cc.factorie.directed.DirectedModel
@@ -25,7 +25,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
 
     patents.foreach(patent => {
       val doc = patent.asLDADocument(WordDomain)
-      //println(patent.id)
+      println(patent.id)
       lda.addDocument(doc,random)
       lda.inferDocumentTheta(doc)
     })
@@ -51,7 +51,12 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
     lda.maximizePhisAndThetas()
     lda
   })(random)
-
+  def getMultiClassPatents():Iterable[Doc] ={
+    lda.documents.filter{doc =>
+      val maxScore = doc.thetaArray.sum
+      doc.thetaArray.filter{_ / maxScore > .25}.length > 1
+    }
+  }
   def saveModel(fileName:String) = {
     val file = new File(fileName)
     val pw = new PrintWriter(file)
@@ -61,9 +66,12 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
     lda.documents.foreach(_.writeNameWordsZs(pw))
     pw.close()
   }
+  patents.foreach{_.iprcLabel}
+  Patent.FeatureDomain.freeze()
 
+  assert(lda.documents.zip(patents).forall{case (doc,pat) => doc.name == pat.id},"Zipped not Aligned")
   val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
-  patents.foreach(patent => patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,docLabels(patent.id).toString,UnsupervisedLabelDomain)))
+  patents.par.foreach(patent => patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,docLabels(patent.id).toString,UnsupervisedLabelDomain)))
   println(patents.size)
 }
 
