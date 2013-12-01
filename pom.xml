@@ -99,10 +99,6 @@
                     <id>runLDAExperiments</id>
                     <mainClass>so.modernized.runners.LDAtoMaxEnt</mainClass>
                 </launcher>
-                <launcher>
-                    <id>runNormalExperiment</id>
-                    <mainClass>so.modernized.experiments.NormalExperiment</mainClass>
-                </launcher>
             </launchers>
         </configuration>
       </plugin>
