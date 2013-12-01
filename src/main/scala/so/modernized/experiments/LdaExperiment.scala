@@ -25,7 +25,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
 
     patents.foreach(patent => {
       val doc = patent.asLDADocument(WordDomain)
-      println(patent.id)
+      //println(patent.id)
       lda.addDocument(doc,random)
       lda.inferDocumentTheta(doc)
     })
