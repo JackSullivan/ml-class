@@ -3,12 +3,13 @@ package so.modernized
 import scala.xml.Elem
 import cc.factorie.app.topics.lda
 import cc.factorie.variable._
-import cc.factorie.app.strings.alphaSegmenter
+import cc.factorie.app.strings.{nonWhitespaceClassesSegmenter, alphaSegmenter}
 import java.io.{FileWriter, BufferedWriter}
 import cc.factorie.app.classify.LinearVectorClassifier
 import scala.collection.mutable
 import cc.factorie.la.Tensor1
-import cc.factorie.app.nlp.lexicon.StopWords
+import cc.factorie.app.nlp.lexicon.{WordLexicon, StopWords}
+import cc.factorie.app.nlp.lemma.LowercaseLemmatizer
 
 /*
 import scala.pickling._
@@ -38,7 +39,7 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
 }
 
-object PatentStopWords extends StopWords.type{
+object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegmenter, LowercaseLemmatizer) {
   this ++=
     """fig
        invention
@@ -49,6 +50,7 @@ object PatentStopWords extends StopWords.type{
        diagram
        picture
     """
+  this.contents ++= StopWords.contents
 }
 
 object Patent {
