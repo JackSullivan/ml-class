@@ -30,11 +30,12 @@ object LDAtoMaxEnt {
     val inDir = args(0)
     val regularizer = new PatentRegularizer(1000,_.iprcLabel)
     val patents = regularizer.apply(PatentPipeline(inDir)).toIterable
-    Patent.FeatureDomain.freeze()
+
     println("Number of Patents Read in: " + patents.size)
     implicit val random = scala.util.Random
     val (training,testing) = patents.split(.7)
     performLDA(training,testing)(random)
+    Patent.FeatureDomain.freeze()
     val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(testing)
     println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
   //  val multiclassPatents = ldaEx.getMultiClassPatents()
