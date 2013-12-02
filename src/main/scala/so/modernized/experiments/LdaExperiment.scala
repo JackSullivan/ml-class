@@ -69,7 +69,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
     pw.close()
   }
   patents.foreach{_.iprcLabel}
-  Patent.FeatureDomain.freeze()
+  //Patent.FeatureDomain.freeze()
 
   assert(lda.documents.zip(patents).forall{case (doc,pat) => doc.name == pat.id},"Zipped not Aligned")
 //  val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
