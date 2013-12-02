@@ -67,6 +67,12 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        0
        invent
        system
+       image
+       chart
+       graph
+       table
+       results
+       unique
        shown
        section
     """

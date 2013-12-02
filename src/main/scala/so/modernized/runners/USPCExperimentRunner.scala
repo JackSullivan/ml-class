@@ -15,6 +15,7 @@ object USPCExperimentRunner {
     val inDir = args(0)
 
     val patents = PatentPipeline(inDir).toList
+    println("Number Patents Loaded: "+ patents.size)
     implicit val random = scala.util.Random
     val MaxEntResults:ExperimentResult = new MaxEntExperiment(_.uspcLabel).runExperiment(patents)
     //val SVMResults = new SVMExperiment(_.uspcLabel).runExperiment(patents)
