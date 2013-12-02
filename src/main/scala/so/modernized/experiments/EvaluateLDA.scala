@@ -11,7 +11,7 @@ import so.modernized.Patent.Label
 class EvaluateLDA(patents: Iterable[Patent], numTopics: Int) {
   println("Evaluating LDA Topics")
   val patentTopicGroups = patents.groupBy(_.unsupervisedLabel.get.categoryValue).map{
-    topic => new TopicResult(topic._1,topic._2,topic._2.groupBy(_.iprcLabel).mapValues(_.size.toDouble))
+    topic => new TopicResult(topic._1,topic._2,topic._2.groupBy(_.iprcLabel.categoryValue).mapValues(_.size.toDouble))
   }
   patentTopicGroups.foreach{
     topic => println(":\n" + "Topic " + topic.label)
@@ -19,4 +19,4 @@ class EvaluateLDA(patents: Iterable[Patent], numTopics: Int) {
   }
   patentTopicGroups.foreach{topic => println("Accuracy " + topic.label + ": " + topic.officialGroupCounts.maxBy(_._2)._2/topic.patents.size)}
 }
-case class TopicResult(label: String, patents:Iterable[Patent], officialGroupCounts: Map[Patent.Label,Double])
+case class TopicResult(label: String, patents:Iterable[Patent], officialGroupCounts: Map[String,Double])
