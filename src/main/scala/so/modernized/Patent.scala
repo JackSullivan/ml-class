@@ -3,7 +3,7 @@ package so.modernized
 import scala.xml.Elem
 import cc.factorie.app.topics.lda
 import cc.factorie.variable._
-import cc.factorie.app.strings.{nonWhitespaceClassesSegmenter, alphaSegmenter}
+import cc.factorie.app.strings.{StringSet, nonWhitespaceClassesSegmenter, alphaSegmenter}
 import java.io.{FileWriter, BufferedWriter}
 import cc.factorie.app.classify.LinearVectorClassifier
 import scala.collection.mutable
@@ -21,12 +21,12 @@ import json._
  * @author John Sullivan
  */
 case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable[String],claims:Iterable[String], abs:String, desc:String,title:String) {
-  def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc)
+  def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc,stopwords = LDAStopWords)
 
   //println("Initialized Patent: %s" format id)
 
   lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedDesc ++ preparedClaims), iprcSections.head, Patent.IPRCLabelDomain)
-  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedDesc), uspcSections.head, Patent.USPCLabelDomain)
+  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedDesc), uspcSections.head.trim.charAt(0).toString, Patent.USPCLabelDomain)
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
@@ -37,6 +37,12 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
     "%d %d %.3f".format(docNumber + 1, index + 1, value)
   }.mkString("\n")
 
+}
+
+object LDAStopWords extends StringSet{
+  val contents = PatentStopWords.contents
+  def contains(s : scala.Predef.String) :Boolean = this.contents.contains(s.toLowerCase())
+  def +=(s : scala.Predef.String) = this.contents += s
 }
 
 object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegmenter, LowercaseLemmatizer) {
