@@ -33,7 +33,9 @@ object LDAtoMaxEnt {
 
     println("Number of Patents Read in: " + patents.size)
     implicit val random = scala.util.Random
-    val (training,testing) = patents.split(.7)
+    val patentGroups = patents.groupBy(_.iprcLabel.categoryValue).map(group => group._2.split(.7))
+    val (training,testing) = (patentGroups.flatMap(_._1),patentGroups.flatMap(_._2))
+    //val (training,testing) = patents.split(.7)
     performLDA(training,testing)(random)
     Patent.FeatureDomain.freeze()
     val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(testing)
