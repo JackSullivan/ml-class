@@ -31,7 +31,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
     })
 
     println(lda.documents.size)
-    lda.inferTopics()
+    lda.inferTopicsMultithreaded(3)
     lda})(random)
   def this(patents:Iterable[Patent],filename: String)(implicit random:Random) = this(patents, {
     val lda = new LDA(WordDomain, 8)(DirectedModel(),random)
@@ -51,6 +51,8 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
     lda.maximizePhisAndThetas()
     lda
   })(random)
+  def getLDADocTopic(doc: Doc): String = doc.thetaArray.zipWithIndex.maxBy(_._1)._2.toString
+
   def getMultiClassPatents():Iterable[Doc] ={
     lda.documents.filter{doc =>
       val maxScore = doc.thetaArray.sum
@@ -70,8 +72,8 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
   Patent.FeatureDomain.freeze()
 
   assert(lda.documents.zip(patents).forall{case (doc,pat) => doc.name == pat.id},"Zipped not Aligned")
-  val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
-  patents.par.foreach(patent => patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,docLabels(patent.id).toString,UnsupervisedLabelDomain)))
+//  val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
+  patents.zip(lda.documents).par.foreach{case (patent,ldaDoc) => if(patent.id == ldaDoc.name) patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,getLDADocTopic(ldaDoc),UnsupervisedLabelDomain)); else println("Patent LDA Doc does not line up")}
   println(patents.size)
 }
 
