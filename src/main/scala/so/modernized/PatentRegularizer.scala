@@ -13,7 +13,7 @@ class PatentRegularizer(number:Int, labelFunc:(Patent => Patent.Label)) {
     patents.flatMap { patent =>
       val label = labelFunc(patent).categoryValue
       counts(label) -= 1
-      if(counts(label) >= 0) {
+      if(counts(label) >= 0 && label != "D") {
         Some(patent)
       } else {
         None

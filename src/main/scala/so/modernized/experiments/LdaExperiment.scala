@@ -27,7 +27,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
       val doc = patent.asLDADocument(WordDomain)
      // println(patent.id)
       lda.addDocument(doc,random)
-      lda.inferDocumentTheta(doc)
+      //lda.inferDocumentTheta(doc)
     })
 
     println(lda.documents.size)
@@ -45,7 +45,7 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int
     breakable { while (true) {
       val doc = new Document(WordSeqDomain, "", Nil) // doc.name will be set in doc.readNameWordsZs
       doc.zs = new lda.Zs(Nil)
-      lda.addDocument(doc, random) // Skip documents that have only one word because inference can't handle them
+      if(doc.length > 10) lda.addDocument(doc, random) // Skip documents that have only one word because inference can't handle them
     }}
     reader.close()
     lda.maximizePhisAndThetas()
