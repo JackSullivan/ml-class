@@ -26,6 +26,6 @@ class EvaluateLDA(patents: Iterable[Patent], numTopics: Int) {
       topic.officialGroupCounts.foreach{ case (offGroup,count) => println("Topic Group: " + offGroup + " = " + count)}
   }
   patentOfficialGroups.foreach{topic => println("Accuracy " + topic.label + ": " + topic.officialGroupCounts.maxBy(_._2)._2/topic.patents.size)}
-  println("Total Accuracy of LDA = " +patentOfficialGroups.map{label => label.officialGroupCounts.maxBy(_._2)._2/label.patents.size})
+  println("Total Accuracy of LDA = " +patentOfficialGroups.map{label => label.officialGroupCounts.maxBy(_._2)._2/label.patents.size}.sum)/(Double)numTopics
 }
 case class TopicResult(label: String, patents:Iterable[Patent], officialGroupCounts: Map[String,Double])
