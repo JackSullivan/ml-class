@@ -14,9 +14,10 @@ object USPCExperimentRunner {
   def main(args:Array[String]) {
     val inDir = args(0)
 
-    val patents = PatentPipeline(inDir).toList
+    val patents = PatentPipeline(inDir).toIterable
     println("Number Patents Loaded: "+ patents.size)
     implicit val random = scala.util.Random
+    patents.foreach{pat => pat.uspcLabel}
     val MaxEntResults:ExperimentResult = new MaxEntExperiment(_.uspcLabel).runExperiment(patents)
     //val SVMResults = new SVMExperiment(_.uspcLabel).runExperiment(patents)
     //val NBResults = new NaiveBayesExperiment(_.uLabel).runExperiment(patents)

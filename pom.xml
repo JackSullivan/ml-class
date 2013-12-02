@@ -88,7 +88,7 @@
           <scalaVersion>${scala.version}</scalaVersion>
             <jvmArgs>
                 <jvmArg>-Xms512m</jvmArg>
-                <jvmArg>-Xmx4g</jvmArg>
+                <jvmArg>-Xmx6g</jvmArg>
             </jvmArgs>
             <launchers>
             <launcher>

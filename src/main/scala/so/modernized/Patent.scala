@@ -25,8 +25,8 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   //println("Initialized Patent: %s" format id)
 
-  lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedDesc ++ preparedClaims), iprcSections.head, Patent.IPRCLabelDomain)
-  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedDesc), uspcSections.head.trim.charAt(0).toString, Patent.USPCLabelDomain)
+  lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedDesc), iprcSections.head, Patent.IPRCLabelDomain)
+  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedAbs), uspcSections.head.trim.substring(0,1), Patent.USPCLabelDomain)
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
@@ -66,6 +66,7 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        9
        0
        invent
+       preferably
        system
        image
        chart
@@ -73,6 +74,17 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        table
        results
        unique
+       present
+       team
+       citation
+       include
+       show
+       tables
+       charts
+       graphs
+       images
+       figures
+       embodiment
        shown
        section
     """

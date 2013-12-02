@@ -1,6 +1,6 @@
 package so.modernized.runners
 
-import so.modernized.{Patent, PatentPipeline}
+import so.modernized.{PatentRegularizer, Patent, PatentPipeline}
 import so.modernized.experiments.{WordDomain, EvaluateLDA, LDAExperiment, MaxEntExperiment}
 import scala.util.Random
 import cc.factorie._
@@ -14,12 +14,14 @@ import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
 object LDAtoMaxEnt {
   def main(args:Array[String]){
     val inDir = args(0)
-    val patents = PatentPipeline(inDir).toIterable
+    val regularizer = new PatentRegularizer(1000,_.iprcLabel)
+    val patents = regularizer.apply(PatentPipeline(inDir)).toIterable
+    Patent.FeatureDomain.freeze()
     println("Number of Patents Read in: " + patents.size)
+
     val (training,testing) = patents.split(.7)
     implicit val random = scala.util.Random
     val ldaEx = new LDAExperiment(training,8)(random)
-    ldaEx.saveModel("LDAExperiment.model")
     println(ldaEx.lda.topicsWordsAndPhrasesSummary(20, 10))
     new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
     testing.foreach{_.iprcLabel}
