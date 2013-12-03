@@ -13,8 +13,9 @@ trait ClassifierExperiment {
   def trainer:LinearVectorClassifierTrainer
   def toLabel:(Patent => Patent.Label)
   def methodName:String
-  def runExperiment(patents:Iterable[Patent], testSplit:Double = 0.7)(implicit random:Random):ExperimentResult = {
-    val (trainVariables, testVariables) = patents.map(toLabel).shuffle.split(testSplit)
+  def runExperiment(train:Iterable[Patent], test:Iterable[Patent])(implicit random:Random):ExperimentResult = {
+    val (trainVariables, testVariables) = train.map(toLabel) -> test.map(toLabel)
+    //val (trainVariables, testVariables) = patents.map(toLabel).shuffle.split(testSplit)
     (trainVariables ++ testVariables).foreach(_.setRandomly)
     println("Features Generated: Starting Training")
     Patent.FeatureDomain.freeze()
