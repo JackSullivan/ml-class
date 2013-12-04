@@ -24,9 +24,6 @@ trait ClassifierExperiment {
     (trainVariables ++ testVariables).foreach(v => v.set(classifier.classification(v.features.value).bestLabelIndex)(null))
 
     val objective = HammingObjective
-
-    //println ("Train accuracy = "+ objective.accuracy(trainVariables))
-    //println ("Test  accuracy = "+ objective.accuracy(testVariables))
     ExperimentResult(methodName, objective.accuracy(trainVariables), objective.accuracy(testVariables))
   }
 }
