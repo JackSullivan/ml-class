@@ -2,7 +2,7 @@ package so.modernized.experiments
 
 import so.modernized.{Patent, PatentPipeline}
 import cc.factorie.variable.{DiscreteSeqVariable, DiscreteSeqDomain, DiscreteDomain, CategoricalSeqDomain}
-import cc.factorie.app.topics.lda.{Document, LDA}
+import cc.factorie.app.topics.lda.{Doc, Document, LDA}
 import cc.factorie.random
 import scala.util.Random
 import cc.factorie.directed.DirectedModel
@@ -19,18 +19,19 @@ import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
  */
 
 object WordDomain extends CategoricalSeqDomain[String]
-class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val random:Random) {
-  def this(patents:Iterable[Patent])(implicit random:Random) = this(patents, {
-    val lda = new LDA(WordDomain, 8)(DirectedModel(), random)
+class LDAExperiment(val patents:Iterable[Patent], val lda:LDA,val numTopics: Int = 8)(implicit val random:Random) {
+  def this(patents:Iterable[Patent], numTopics: Int = 8)(implicit random:Random) = this(patents, {
+    val lda = new LDA(WordDomain, numTopics)(DirectedModel(), random)
 
     patents.foreach(patent => {
       val doc = patent.asLDADocument(WordDomain)
+     // println(patent.id)
       lda.addDocument(doc,random)
-      lda.inferDocumentTheta(doc)
+      //lda.inferDocumentTheta(doc)
     })
 
     println(lda.documents.size)
-    lda.inferTopics()
+    lda.inferTopicsMultithreaded(3)
     lda})(random)
   def this(patents:Iterable[Patent],filename: String)(implicit random:Random) = this(patents, {
     val lda = new LDA(WordDomain, 8)(DirectedModel(),random)
@@ -44,13 +45,20 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val rand
     breakable { while (true) {
       val doc = new Document(WordSeqDomain, "", Nil) // doc.name will be set in doc.readNameWordsZs
       doc.zs = new lda.Zs(Nil)
-      lda.addDocument(doc, random) // Skip documents that have only one word because inference can't handle them
+      if(doc.length > 10) lda.addDocument(doc, random) // Skip documents that have only one word because inference can't handle them
     }}
     reader.close()
     lda.maximizePhisAndThetas()
     lda
   })(random)
+  def getLDADocTopic(doc: Doc): String = doc.thetaArray.zipWithIndex.maxBy(_._1)._2.toString
 
+  def getMultiClassPatents():Iterable[Doc] ={
+    lda.documents.filter{doc =>
+      val maxScore = doc.thetaArray.sum
+      doc.thetaArray.filter{_ / maxScore > .25}.length > 1
+    }
+  }
   def saveModel(fileName:String) = {
     val file = new File(fileName)
     val pw = new PrintWriter(file)
@@ -60,9 +68,13 @@ class LDAExperiment(val patents:Iterable[Patent], val lda:LDA)(implicit val rand
     lda.documents.foreach(_.writeNameWordsZs(pw))
     pw.close()
   }
+  patents.foreach{_.iprcLabel}
+  //Patent.FeatureDomain.freeze()
 
-  val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
-  patents.foreach(patent => patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,docLabels(patent.id).toString,UnsupervisedLabelDomain)))
+  assert(lda.documents.zip(patents).forall{case (doc,pat) => doc.name == pat.id},"Zipped not Aligned")
+//  val docLabels = lda.documents.map(doc => (doc.name,doc.thetaArray.zipWithIndex.maxBy(_._1)._2)).toMap
+  patents.zip(lda.documents).par.foreach{case (patent,ldaDoc) => if(patent.id == ldaDoc.name) patent.unsupervisedLabel = Some(new Label(patent.iprcLabel.features,getLDADocTopic(ldaDoc),UnsupervisedLabelDomain)); else println("Patent LDA Doc does not line up")}
+  println(patents.size)
 }
 
 object LDAExperiment{

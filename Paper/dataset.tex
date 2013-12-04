@@ -1,0 +1,3 @@
+\section{Data Set}
+\cite*{mimno-mccallum-11}
+Our data is from the United States Patent and Trademark Office Bulk Downloads located on Google.  The original data file is prepared as an XML file, which we then parse to find a list of words contained within the patent.  Based on the total list of words of all patents in a sample, a feature vector is created such that the feature vector includes a feature for every seen word within the dataset.  A 1 is included for a feature within a feature vector for a patent if the patent contains the word, and a 0 is included for a specific feature if the patent did not include the word.  This bag of words technique was used for all experiments.

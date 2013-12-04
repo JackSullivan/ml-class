@@ -3,12 +3,13 @@ package so.modernized
 import scala.xml.Elem
 import cc.factorie.app.topics.lda
 import cc.factorie.variable._
-import cc.factorie.app.strings.alphaSegmenter
+import cc.factorie.app.strings.{StringSet, nonWhitespaceClassesSegmenter, alphaSegmenter}
 import java.io.{FileWriter, BufferedWriter}
 import cc.factorie.app.classify.LinearVectorClassifier
 import scala.collection.mutable
 import cc.factorie.la.Tensor1
-import cc.factorie.app.nlp.lexicon.StopWords
+import cc.factorie.app.nlp.lexicon.{WordLexicon, StopWords}
+import cc.factorie.app.nlp.lemma.LowercaseLemmatizer
 
 /*
 import scala.pickling._
@@ -20,7 +21,7 @@ import json._
  * @author John Sullivan
  */
 case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable[String],claims:Iterable[String], abs:String, desc:String,title:String) {
-  def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc)
+  def asLDADocument(implicit domain:CategoricalSeqDomain[String]):lda.Document = lda.Document.fromString(domain, id, desc,stopwords = LDAStopWords)
 
   //println("Initialized Patent: %s" format id)
 
@@ -29,13 +30,65 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
-  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(StopWords.contains).toSeq
-  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(StopWords.contains).toSeq)
-  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(StopWords.contains).toSeq
+  private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
+  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
+  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
   def asVectorString(docNumber:Int) = iprcLabel.features.value.activeElements.map { case (index, value) =>
     "%d %d %.3f".format(docNumber + 1, index + 1, value)
   }.mkString("\n")
 
+}
+
+object LDAStopWords extends StringSet{
+  val contents = PatentStopWords.contents
+  def contains(s : scala.Predef.String) :Boolean = this.contents.contains(s.toLowerCase())
+  def +=(s : scala.Predef.String) = this.contents += s
+}
+
+object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegmenter, LowercaseLemmatizer) {
+  this ++=
+    """fig
+       invention
+       patent
+       figure
+       section
+       claim
+       diagram
+       picture
+       1
+       2
+       3
+       4
+       5
+       6
+       7
+       8
+       9
+       0
+       invent
+       preferably
+       system
+       image
+       chart
+       graph
+       table
+       results
+       unique
+       present
+       team
+       citation
+       include
+       show
+       tables
+       charts
+       graphs
+       images
+       figures
+       embodiment
+       shown
+       section
+    """
+  this.contents ++= StopWords.contents
 }
 
 object Patent {
@@ -55,17 +108,17 @@ object Patent {
   def classifier(label:Label):LinearVectorClassifier[Label, Features] = new LinearVectorClassifier[Label, Features](label.domain.dimensionSize, FeatureDomain.dimensionSize, _.features)
 
   object CPCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H", "N")
-    freeze()
-  }
-
-  object IPRCLabelDomain extends CategoricalDomain[String] {
     this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H", "Y")
     freeze()
   }
 
+  object IPRCLabelDomain extends CategoricalDomain[String] {
+    this ++= Vector("A", "B", "C", "D", "E", "F", "G", "H")
+    freeze()
+  }
+
   object USPCLabelDomain extends CategoricalDomain[String] {
-    this ++= Vector("1", "B", "C", "D", "E", "F", "G", "H", "N")
+    this ++= Vector("1", "2", "3", "4", "5", "6", "7", "8", "9","0","D")
     freeze()
   }
 

@@ -88,13 +88,21 @@
           <scalaVersion>${scala.version}</scalaVersion>
             <jvmArgs>
                 <jvmArg>-Xms512m</jvmArg>
-                <jvmArg>-Xmx4g</jvmArg>
+                <jvmArg>-Xmx6g</jvmArg>
             </jvmArgs>
             <launchers>
             <launcher>
                 <id>runSupervisedExperiments</id>
                 <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
             </launcher>
+                <launcher>
+                <id>runLDAExperiments</id>
+                <mainClass>so.modernized.runners.LDAtoMaxEnt</mainClass>
+            </launcher>
+                <launcher>
+                    <id>runUSPCExperiments</id>
+                    <mainClass>so.modernized.runners.USPCExperimentRunner</mainClass>
+                </launcher>
             </launchers>
         </configuration>
       </plugin>
