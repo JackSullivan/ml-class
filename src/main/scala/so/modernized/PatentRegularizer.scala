@@ -11,11 +11,9 @@ class PatentRegularizer(number:Int, labelFunc:(Patent => Patent.Label)) {
   def apply(patents:Iterator[Patent]):Iterator[Patent] = {
     val counts = new mutable.HashMap[String, Int].withDefaultValue(number)
     patents.flatMap { patent =>
-      val label = patent.iprcSections.head
-      //val label = labelFunc(patent).categoryValue
+      val label = labelFunc(patent).categoryValue
       counts(label) -= 1
-      if(counts(label) >= 0 && label != "D") {
-        patent.iprcLabel
+      if(counts(label) >= 0) {
         Some(patent)
       } else {
         None

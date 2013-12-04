@@ -10,7 +10,7 @@ class Filter(path:(Elem => NodeSeq), pred:(NodeSeq => Boolean), name:String) {
     val elem = path(doc)
     val res = pred(elem)
     if(!res) {
-       //println("%s failed %s".format(elem,name))
+       println("%s failed %s".format(elem,name))
     }
     res
   }
