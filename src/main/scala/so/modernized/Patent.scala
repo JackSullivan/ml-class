@@ -24,8 +24,8 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   //println("Initialized Patent: %s" format id)
 
-  lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedDesc), iprcSections.head, Patent.IPRCLabelDomain)
-  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedDesc), uspcSections.head, Patent.USPCLabelDomain)
+  lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedClaims.flatten ++ preparedAbs ++ preparedAbs.sliding(2).toSeq.map(_.mkString(" "))), iprcSections.head, Patent.IPRCLabelDomain)
+  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedClaims.flatten ++ preparedAbs ++ preparedAbs.sliding(2).toSeq.map(_.mkString(" "))), uspcSections.head, Patent.USPCLabelDomain)
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
