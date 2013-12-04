@@ -39,7 +39,9 @@ object LDAtoMaxEnt {
     //val (training,testing) = patents.split(.7)
     performLDA(training,testing)(random)
     Patent.FeatureDomain.freeze()
-    val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(testing)
+    val (train, test) = testing.shuffle.split(0.7)
+
+    val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(train,test)
     println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
   //  val multiclassPatents = ldaEx.getMultiClassPatents()
    // println("MultiClass Patents Labeled with Multiple Classes: " + multiclassPatents.map(_.))
