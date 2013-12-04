@@ -1,35 +1,91 @@
-\documentclass[]{article}
+\documentclass{article}
+\usepackage{amsmath,amsfonts,amsthm,amssymb,wasysym}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{Tabbing}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{chngpage}
+\usepackage{url}
+\usepackage{subfigure}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage[color=blue!40]{todonotes}
+\usepackage[protrusion=true,expansion,kerning]{microtype}
+\usepackage{natbib}
 
-%opening
-\title{}
-\author{Sullivan, Cellier, Hobbs}
+% to adjust margins:
+\topmargin=-0.25in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.25in
+\textheight=8.5in
+\headsep=0.25in
+
+% homework specific information
+\newcommand{\hmwkTitle}{Machine Learning Paper}
+\newcommand{\hmwkDueDate}{December 6, 2013}
+\newcommand{\hmwkClass}{}
+\newcommand{\hmwkClassInstructor}{}
+\newcommand{\hmwkAuthorName}{Sullivan, Cellier, Hobbs}
+
+% header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkTitle}
+\rhead{\hmwkDueDate}   
+\lfoot{}
+\cfoot{}
+\rfoot{\emph{Page\ \thepage\ of\ \pageref{LastPage}}}                          
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\makeatletter
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+\makeatother
+
+%\renewcommand{\bibsection}{\subsubsection*{\refname}}
+
+% Make title 
+\title{
+\LARGE\bf Patent Classification using Supervised Methods \\
+\date{}
+\author{ John Sullivan \and Caitlin Cellier \and J. Nicholas Hobbs}
+}
 
 \begin{document}
 
 \maketitle
 
-\begin{abstract}
+\input{abstract}
 
-\end{abstract}
+\thispagestyle{fancy}
 
-\section{Tables}
-\begin{table}[ht] 
-\caption{PCA Classification Results} % title of Table 
-\centering % used for centering table 
-\begin{tabular}{c c c c} % centered columns (4 columns) 
-\hline\hline %inserts double horizontal lines 
-PCA & MaxEnt\#1 & SVM\#2 & Naive Bayes\#3 \\ [0.5ex] % inserts table 
-%heading 
-\hline % inserts single horizontal line 
-3 & 29.2829 & 837 & 970 \\ % inserting body of the table 
-10 &  & 877 & 230 \\ 
-50 & 31 & 25 & 415 \\ 
-100 & 35 & 144 & 2356 \\ 
-1000 & 45 & 300 & 556 \\ [1ex] % [1ex] adds vertical space 
-\hline %inserts single line 
-\end{tabular} 
-\label{table:nonlin} % is used to refer this table in the text 
-\end{table} 
+\maketitle
 
+\input{intro}
+\input{dataset}
+\input{methods}
+\input{results}
+\input{contributions}
+%\input{previouswork}
+
+
+\thispagestyle{fancy}
+
+%\begin{multicols}{1}
+
+\cite*{zhang-nivre-12}
+
+\bibliography{Sullivan_Cellier_Hobbs}
+\bibliographystyle{unsrt}
+
+%\end{multicols}
 
 \end{document}

@@ -5,6 +5,7 @@ import so.modernized.experiments.{WordDomain, EvaluateLDA, LDAExperiment, MaxEnt
 import scala.util.Random
 import cc.factorie._
 import so.modernized.Patent.{UnsupervisedLabelDomain, Label}
+import scala.Some
 
 /**
  * User: cellier
