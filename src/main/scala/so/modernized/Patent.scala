@@ -94,7 +94,7 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
 object Patent {
   def fromXML(patentXML:Elem):Patent = Patent((patentXML \ "us-bibliographic-data-grant" \ "publication-reference" \ "document-id" \ "doc-number").text,
   (patentXML \ "us-bibliographic-data-grant" \ "classifications-ipcr" \ "classification-ipcr" \ "section").map{_.text},
-  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").map{_.text},
+  (patentXML \ "us-bibliographic-data-grant" \ "classification-national" \ "main-classification").map{_.text.head.toString},
 
     (patentXML \ "claims" \ "claim").map{
     claimNode =>
@@ -137,19 +137,27 @@ object Patent {
 
   }
 
-  def writeSparseVector(patents:Iterator[Patent], labelFun:(Patent => Patent.Label), filename:String) {
-    val outFilename = "%s.vec" format filename
-    val labelFilename = "%s.label" format filename
-    val wrt = new BufferedWriter(new FileWriter(outFilename))
-    val labelWrt = new BufferedWriter(new FileWriter(labelFilename))
-    Patent.FeatureDomain.freeze()
-    println("writing")
+  def writeSparseVector(patents:Iterator[Patent], labelFun:(Patent => Patent.Label), filename:String, fileSize:Int) {
+    var fileNum = 0
+    var itemNum = 1
+    var wrt = new BufferedWriter(new FileWriter("%s_%d.vec".format(filename, fileNum)))
+    var labelWrt = new BufferedWriter(new FileWriter("%s_%d.label".format(filename, fileNum)))
     patents.zipWithIndex.foreach{ case (patent, index) =>
-      println(patent.asVectorString(index))
       wrt.write(patent.asVectorString(index))
       wrt.write("\n")
       labelWrt.write("%d %d".format(index + 1, labelFun(patent).intValue + 1))
       labelWrt.write("\n")
+      itemNum += 1
+      if(itemNum > fileSize) {
+        itemNum = 1
+        wrt.flush()
+        wrt.close()
+        labelWrt.flush()
+        labelWrt.close()
+        fileNum += 1
+        wrt = new BufferedWriter(new FileWriter("%s_%d.vec".format(filename, fileNum)))
+        labelWrt = new BufferedWriter(new FileWriter("%s_%d.label".format(filename, fileNum)))
+      }
     }
     wrt.flush()
     wrt.close()
