@@ -15,7 +15,7 @@ object MaxEntRunner {
     val dataDir = args(0)
     val patents = PatentPipeline(dataDir).take(40000)
     implicit val random = scala.util.Random
-    Patent.FeatureDomain.freeze()
+
     val (train, test) = patents.toList.split(0.7)
 
     val results = new MaxEntExperiment(_.iprcLabel).runExperiment(train,test)
