@@ -5,6 +5,7 @@ import scala.collection._
 import java.io.{File}
 import scala.math._
 import scala.Predef._
+import cc.factorie.variable.CategoricalSeqDomain
 
 
 object TopicCoherence {
@@ -37,7 +38,7 @@ object TopicCoherence {
       val topic_words = line.split(" ")
       val topwords = topic_words.slice(1,wordcount+1)
       var topword:Vector[String] = Vector()
-      topwords.foldLeft(topword)[Vector[String]]{_ :+ _}
+      topwords.foldLeft[Vector[String]](topword){_ :+ _}
       assert(topword.isEmpty)
       topwords.foreach{word =>  topword = topword :+ word}
 
@@ -93,7 +94,7 @@ object TopicCoherence {
     println("Document frequencies " +document_frequencies)
     println("Co-document frequencies "+codocument_frequencies)
     println("Reading documents")
-
+    implicit object WordDomain extends CategoricalSeqDomain[String]
      patents.foreach{patent=>
      count=count+1
      println("Line count :" +count)
