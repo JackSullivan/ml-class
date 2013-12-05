@@ -32,7 +32,7 @@ object GenerateEvenSparseVectors {
 
     //val (testIter, trainIter) = new TrainTestSplit(150, labelFun).apply(new PatentRegularizer(numberVecs, labelFun).apply(PatentPipeline(dataDir)))
 
-    val patents = PatentPipeline(dataDir)
+    val patents = PatentPipeline(dataDir).take(20000)
     //val svm = new SVMExperiment(labelFun)
     //val max = new MaxEntExperiment(labelFun)
     //val nb = new NaiveBayesExperiment(labelFun)

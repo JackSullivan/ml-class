@@ -23,7 +23,7 @@ object TopicCoherence {
     }
     coherencefile.write("Average = "+average+"\n")
     coherencefile.close()
-    //println(coherence)
+    println(coherence)
 
 
 

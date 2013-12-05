@@ -25,11 +25,23 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   //println("Initialized Patent: %s" format id)
 
-  lazy val iprcLabel = new Patent.Label(new Patent.Features(preparedClaims.flatten ++ preparedAbs ++ preparedAbs.sliding(2).toSeq.map(_.mkString(" "))), iprcSections.head, Patent.IPRCLabelDomain)
-  lazy val uspcLabel = new Patent.Label(new Patent.Features(preparedClaims.flatten ++ preparedAbs ++ preparedAbs.sliding(2).toSeq.map(_.mkString(" "))), uspcSections.head, Patent.USPCLabelDomain)
+  lazy val iprcLabel = new Patent.Label(generateFeatures(preparedClaims, preparedAbs, preparedTitle), iprcSections.head, Patent.IPRCLabelDomain)
+  lazy val uspcLabel = new Patent.Label(generateFeatures(preparedClaims, preparedAbs, preparedTitle), uspcSections.head, Patent.USPCLabelDomain)
+
+  private def generateFeatures(claims:Iterable[Iterable[String]], abs:Iterable[String], titleTokens:Iterable[String]):Patent.Features = {
+    val fs = abs ++
+             abs.sliding(2).map(_.mkString(" ")).toSeq ++
+             claims.flatten ++
+             claims.map(_.sliding(2).map(_.mkString(" "))).flatten ++
+             titleTokens ++
+             titleTokens.sliding(2).map(_.mkString(" ")).toSeq
+
+    new Patent.Features(fs)
+  }
 
   var unsupervisedLabel:Option[Patent.Label] = None
 
+  private lazy val preparedTitle:Iterable[String] = alphaSegmenter(title).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
   private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
   private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
   private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
