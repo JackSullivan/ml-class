@@ -9,7 +9,7 @@ import cc.factorie._
  * Time: 5:20 PM
  */
 
-class NaiveBayes {
+object NaiveBayes {
   def main(args: Array[String]){
     val dataDir = args(0)
     val patents = PatentPipeline(dataDir).take(40000)
