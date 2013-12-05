@@ -91,6 +91,14 @@
                 <jvmArg>-Xmx6g</jvmArg>
             </jvmArgs>
             <launchers>
+                <launcher>
+                    <id>runMaxEnt</id>
+                    <mainClass>so.modernized.runners.MaxEntRunner</mainClass>
+                </launcher>
+                <launcher>
+                    <id>runNaiveBayes</id>
+                    <mainClass>so.modernized.runners.NaiveBayes</mainClass>
+                </launcher>
             <launcher>
                 <id>runSupervisedExperiments</id>
                 <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
