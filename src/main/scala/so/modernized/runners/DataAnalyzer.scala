@@ -28,9 +28,9 @@ object DataAnalyzer {
     }
     val tfidfVals = preparetfidf(train)
     tfidfVals.zipWithIndex.foreach{ case (tfidfVal, categoryIndex)=>
-      println("Class: " + categoryIndex)
+      //println("Class: " + categoryIndex)
       tfidfVal.foreachActiveElement{ case (index, value) =>
-        print(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t|\t")
+        print(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
       }
       println()
     }
