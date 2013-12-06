@@ -108,6 +108,10 @@
                 <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
             </launcher>
                 <launcher>
+                    <id>runGenerate</id>
+                    <mainClass>so.modernized.runners.GenerateEvenSparseVectors</mainClass>
+                </launcher>
+                <launcher>
                 <id>runLDAExperiments</id>
                 <mainClass>so.modernized.runners.LDAtoMaxEnt</mainClass>
             </launcher>
