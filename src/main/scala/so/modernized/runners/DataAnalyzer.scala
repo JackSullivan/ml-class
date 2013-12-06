@@ -28,7 +28,7 @@ object DataAnalyzer {
     }
     val tfidfVals = preparetfidf(train)
     tfidfVals.zipWithIndex.foreach{ case (tfidfVal, categoryIndex)=>
-      //println("Class: " + categoryIndex)
+      print("topic" + categoryIndex+"\t")
       tfidfVal.foreachActiveElement{ case (index, value) =>
         print(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
       }
@@ -79,7 +79,7 @@ object DataAnalyzer {
 
   def compressBags(ents:Iterable[Patent]) {
     ents.foreach{ ent =>
-      trimBagTopK(ent.iprcLabel.features.value, 32)
+      trimBagTopK(ent.iprcLabel.features.value, 50)
     }
   }
 

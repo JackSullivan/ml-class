@@ -35,19 +35,19 @@ object TopicCoherence {
     println("Reading topic file")
     val topic_words_file = scala.io.Source.fromFile(new File(fileName))
     for (line <- topic_words_file.getLines()) {
-      val topic_words = line.split("\t|\t")
+      val topic_words = line.split("\t")
       val topWords = topic_words.slice(0,wordcount)
-      val topWord:Vector[String] = Vector()
-      topWords.foldLeft[Vector[String]](topWord){_ :+ _}
-      assert(!topWord.isEmpty)
+      //val topWord:Vector[String] = Vector()
+    //  topWords.foldLeft[Vector[String]](topWord){_ :+ _}
+    //  assert(!topWord.isEmpty)
       //topwords.foreach{word =>  topword = topword :+ word}
 
       //println(topword)
-      /*var topword:Vector[String] = Vector()
-      for(word <- topwords){
-        topword+=word
-      } */
-      topic_highfrequencyword_list("topic"+topic_words(0)) = topWord
+      var topword:Vector[String] = Vector()
+      for(word <- topWords){
+        topword:+word
+      }
+      topic_highfrequencyword_list("topic"+topic_words(0)) = topword
     }
     topic_words_file.close()
     topic_highfrequencyword_list
