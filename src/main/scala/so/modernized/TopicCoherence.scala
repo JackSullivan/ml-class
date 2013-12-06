@@ -35,6 +35,7 @@ object TopicCoherence {
     println("Reading topic file")
     val topic_words_file = scala.io.Source.fromFile(new File(fileName))
     for (line <- topic_words_file.getLines()) {
+      println("Line Read")
       val topic_words = line.split("\t")
       //var topWord:Vector[String] = Vector()
 

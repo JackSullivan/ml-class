@@ -5,6 +5,7 @@ import cc.factorie._
 import scala.collection.mutable
 import cc.factorie.la.Tensor1
 import cc.factorie.Tensor1
+import java.io.File
 
 /**
  * User: cellier
@@ -27,14 +28,16 @@ object DataAnalyzer {
               label + ": " + classPatents.length
     }
     val tfidfVals = preparetfidf(train)
+    val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
     tfidfVals.zipWithIndex.foreach{ case (tfidfVal, categoryIndex)=>
-      print("topic" + categoryIndex+"\t")
+      val buffer = new StringBuffer
+      buffer.append("topic" + categoryIndex+"\t")
       tfidfVal.foreachActiveElement{ case (index, value) =>
-        print(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
+        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
       }
-      println()
+      coherencefile.write(buffer.toString)
     }
-
+    coherencefile.close()
 //    groupedPatents.foreach{
 //      case (label,classPatents) =>
 //        label + ": " + classPatents.length
