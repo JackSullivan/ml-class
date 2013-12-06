@@ -205,7 +205,7 @@ object Patent {
       println("Preparing tfidf")
       Patent.preparetfidf(patents)
       println("compressing bags")
-      Patent.compressBags(patents)
+      //Patent.compressBags(patents)
     }
     Patent.FeatureDomain.freeze()
     println("writing")
@@ -264,9 +264,9 @@ object Patent {
     }
   }
 
-  def compressBags(ents:Iterable[Patent]) {
+  def compressBags(ents:Iterable[Patent],numFeatures:Int) {
     ents.foreach{ ent =>
-      trimBagTopK(ent.iprcLabel.features.value, 32)
+      trimBagTopK(ent.iprcLabel.features.value, numFeatures)
     }
   }
 
