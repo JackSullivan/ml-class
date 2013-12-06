@@ -1,86 +1,74 @@
 \section{Results}
-\subsection{Experiment 1: Baseline}
-In the first experiment, our dataset consisted of approximately 3500 patents.  The data was evenly split over the each of the 7 categories.
-The training data consisted of 70\% of the data while the testing data consisted of 30\% of the data.  The following is the result of the testing
-set.
-\\
-\\Support Vector Machine: 49.3\% Accuracy
-\\Maximum Entropy: 46\% Accuracy
-\\
-\\Because the data is evenly split, a random choice would expect the results to be near 14\%, which means that even with these
-base algorithms, the results are above chance.
-\subsection{Experiment 2: Dimensionality Reduction}
-In the second experiment, we selected two different dimensionality reduction techniques, principle component analysis, and laplacian eigenmap.
-The two dimensionality techniques were then applied to the dataset from Experiment 1.  The results are shown in two tables below.
-\\
-\begin{table}[h]
-\caption{Maximum Entropy with Dimensionally Reduction}
+\subsection{Baseline}
+For our first set of experiments we wanted to establish a baseline to compare all other results against.  To this end, we created a dataset consisting of approximately 3500 patents.  The samples were evenly split over each of the 7 categoreis with 500 samples per category.  We then trained a support vector machine and a maximum entropy algorithm on the dataset.  The testing accuracy for the support vector machine was
+49.33\%, and the testing accuracy for maximum entropy was 46.12\%.  Because there are 7 categories, random chance would put the accuracy at 
+14.28\%.  This means that, as a baseline, the algorithms are already performming above random chance.
+
+\begin{figure}[H!]
 \centering
-\begin{tabular}{c c c}
-Features & Laplacian Eigenmap & PCA Accuracy \\
-3 & 15 & 18 \\
-10 & 24 & 28 \\
-50 & 30 & 52 \\
-100 & 35 & 52 \\
-1000 & 44 & 59 \\
+\includegraphics{Experiment Results 1.png}
+\caption{Baselines}
+\label{overflow}
+\end{figure}
+
+\subsection{Dimensionality Reduction}
+Due to the large number of features, we first attempted dimensionality reduction on the dataset as a means to increase the accuracy of the algorithm.  To test this, we tried two dimensionality reduction techniques, principle component analysis and laplacian eigenmap.  These dimensionality techiques were applied to the dataset from the baseline analysis.  We found that the results tended to be ambiguous, in that the testing accuracy of maximum entropy tended to increase by approximately 7\% while the support vector machine had its testing accuracy decreased by 7\%.  However, except for these adjustments, the results did not change significantly.
+\\
+\begin{table}[!Ht]
+\caption{Maximum Entropy with Dimensionally Reduction Testing Accuracy}
+\centering
+\begin{tabular}[!Ht]{| l | l | l |}
+\hline
+Features & Laplacian Eigenmap & PCA \\ \hline
+3 & 14.86\% & 38.86\% \\ \hline
+10 & 42.10\% & 50.29\% \\ \hline
+50 & 41.90\% &  52.95\% \\ \hline
+100 & 42.10\% & 52.00\%	 \\ \hline
+1000 & 38.67\% & 45.71\% \\ \hline
 \end{tabular}
 \end{table}
-\\
-\begin{table}[h]
-\caption{SVM with Dimensionally Reduction}
+\begin{table}[H!]
+\caption{SVM with Dimensionally Reduction Testing Accuracy}
 \centering
-\begin{tabular}{c c c}
-Features & Laplacian Eigenmap & PCA Accuracy \\
-3 & 17 & 18 \\
-10 & 18 & 26 \\
-50 & 26 & 26 \\
-100 & 31 & 32 \\
-1000 & 35 & 42 \\
+\begin{tabular}{| l | l | l |}
+\hline
+Features & Laplacian Eigenmap & PCA Accuracy \\ \hline
+3 & 16.96\% & 18.38\% \\ \hline
+10 & 17.81\% & 26.48\% \\ \hline
+50 & 26.29\% & 26.19\% \\ \hline
+100 & 30.76\% & 32.00 \\ \hline
+1000 & 34.57\% & 42.09\% \\ \hline
 \end{tabular}
 \end{table}
-\\
-\\ Visualization of these tables are shown here.
-\\ Insert graphs here
-\\
-The results are unclear.  This is due to the fact that compared with the baseline Maximum Entropy had an icnrease in its testing accuracy, however
-the support vector machine had a decrease in its testing accuracy.  Therefore, the results of dimensionality reduction appears to be dependent
-on the classifier which was used.
-\\
-\\ Graphs of these results are shown below.
-Insert Graphs here!
-\\
-\subsection{Experiment 3}
-In the third experiment we attempted to increase the sample size of our dataset to determine if this would noticeably increase accuracy when
-compared against the baseline.  The dataset was increased to 20000 and 40000.  The results are shown below.
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\begin{table}[h]
-\caption{Dataset Incrase}
+\\ Put in Experiment Results 2 - SVM
+\\ Put in Experiment Results 2- Maximum Entropy
+
+\subsection{Dataset Size}
+For the third set of experiments we wanted to determine to what extent more data would begin to alter the accuracy the algorithms.  To this end we increased the size of the dataset from 3500 to 20000, and then to 40000 sample patents.  These sample patents were in an identical format to Experiment 1, and no dimensionality reduction was performed on these datasets.  Both the support vector machine and maximum entropy were trained and tested on these datasets.  Overall, the results showed convergence around the 20000 patents for both the support vector machine and maximum entropy.
+
+
+\begin{table}[Ht]
+\caption{Dataset Size and Testing Accuracy}
 \centering
-\begin{tabular}{c c c}
-Dataset & Classifier & Testing Accuracy \\
-3500 & SVM & 49 \\
-20000 & SVM & 70 \\
-40000 & SVM & Timed Out \\
-3500 & MaxEnt & 46 \\
-20000 & MaxEnt & ?? \\
-40000 & MaxEnt & 70 \\
+\begin{tabular}{| l | l | l |}
+\hline
+Dataset & Classifier & Testing Accuracy \\ \hline
+3500 & SVM & 49.33\% \\ \hline
+20000 & SVM & ? \\ \hline
+40000 & SVM & 69.53\% \\ \hline
+3500 & MaxEnt & 46.12\% \\ \hline
+20000 & MaxEnt & ? \\ \hline
+40000 & MaxEnt & 69.75\% \\ \hline
 \end{tabular}
 \end{table}
-\\
-These results imply that increasing the dataset did greatly improve the accuracy on the testing set.
-
-\subsection{Experiment 4}
-We then changed the features of dataset to....
-\\SVM 40000 new features: 72\%
-\\Maximum Entropy new features: 73\% 
 
 
-\subsection{Experiment 5}
-Are we still doing an unsupervised portion?
+Insert experiment 3 graph
+
+
+
+\subsection{New Features}
+For our fourth experiment, we decided to change the type of features collected.  The features were changed by no longer reading from the description of the patent with unigrams, and instead claims and abstract were read and included both unigrams and bigrams. We choose to use a large dataset of 40000 as this sample had a high accuracy in our earlier tests.  The results indicated that the support vector machine had an accuracy of 72.12\% and the maximum entropy algorithm had an accuracy of 72.57\%.  Overall, this is a slight improvement from experiment 3 of 3\% for the support vector machine and an increase of 3\% for the maximum entropy classifier.
+
+\subsection{TfIDF}
+Term Frequency
