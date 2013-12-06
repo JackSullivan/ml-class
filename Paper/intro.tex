@@ -1,15 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-The United States Patent Office granted 276,788 patents in 2012\cite{USPTO:2013:stats}. This is more than double the number granted 20 years ago, and rate of filings is still increasing. In the circumstance it makes sense to consider scalable, automated approaches to parts of the patent review process. To this end we examined both attempting to classify patents into existing categorizations using supervised machine learning techniques, and creating alternative categorizations using unsupervised machine learning techniques. We also attempted to measure the coherency of the existing classifications. Reliable automation of patent categorization is an important first step to larger scale automation of the patent review process.
+\indent
+The United States Patent Office granted 276,788 patents in 2012\cite{USPTO:2013:stats}. This is more than double the number granted 20 years ago, and rate of filings is still increasing. In the circumstance it makes sense to consider scalable, automated approaches to parts of the patent review process. To this end we examined both attempting to classify patents into existing categorizations using supervised machine learning techniques, and creating alternative categorizations using unsupervised machine learning techniques. We also attempted to measure the coherency of the existing and alternative classifications. Reliable automation of patent categorization is an important first step to larger scale automation of the patent review process.
 
-
-
-Specifically, we considered the use of machine learning classifiers to automatically categorize patents into each of the 8 patent categories specified in the International Patent Classification\cite{ipc:2013:guide}. The USPTO is moving from its previous classification system (which contained thousands of classes and was deemed unusable for this project) to the Cooperative Patent Classification, which is a superset of the IPC. US patent grants since <FIND A YEAR> have been labelled with an IPC Classification in preparation for this turn over.
+In this paper we experimented with several machine learning classifiers to automatically categorize patents into each of the 8 patent categories specified in the International Patent Classification\cite{ipc:2013:guide} (IPC). The USPTO is moving from its previous classification system (which contained thousands of classes and was deemed unsuitable for standard machine learning classification techniques) to the Cooperative Patent Classification (CPC), which is a superset of the IPC. US patent grants since <FIND A YEAR> have been labelled with an IPC Classification in preparation for this conversion. The CPC classification conforms to the IPC classification, but also contains one additional category, Y, which is for patents on technologies that span several sections of of the IPC classification. All patents must contain at least one primary classification, but may be assigned more if they are relevant to multiple IPC classes. In our experiments we only attempted to classify the primary classification.
 
 % multiple categories can be assigned
 % CPC has cross-category
 % Break out category talk to separate section/move to dataset
-% talk more about size of task and need for speed
 
 % Difference between CPC and IPC
 % Relative size of categories?
