@@ -15,6 +15,26 @@
       <name>Scala-Tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-releases</url>
     </repository>
+      <repository>
+          <id>sonatype-snapshots</id>
+          <name>Sonatype Snapshots</name>
+          <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+      </repository>
+      <repository>
+        <id>dev-iesl.cs.umass.edu.thirdparty</id>
+        <name>IESL Third-Party</name>
+        <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/thirdparty/</url>
+      </repository>
+      <repository>
+        <id>iesl.cs.umass.edu.public</id>
+        <name>IESL Public</name>
+        <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public/</url>
+      </repository>
+      <repository>
+        <id>iesl.cs.umass.edu.snapshots</id>
+        <name>IESL Snapshots</name>
+        <url>https://dev-iesl.cs.umass.edu/nexus/content/repositories/public-snapshots/</url>
+      </repository>
   </repositories>
 
   <pluginRepositories>
@@ -31,6 +51,11 @@
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
     </dependency>
+      <dependency>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-pickling_2.10</artifactId>
+          <version>0.8.0-SNAPSHOT</version>
+      </dependency>
       <dependency>
           <groupId>cc.factorie</groupId>
           <artifactId>factorie</artifactId>
@@ -61,6 +86,24 @@
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+            <jvmArgs>
+                <jvmArg>-Xms512m</jvmArg>
+                <jvmArg>-Xmx6g</jvmArg>
+            </jvmArgs>
+            <launchers>
+            <launcher>
+                <id>runSupervisedExperiments</id>
+                <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
+            </launcher>
+                <launcher>
+                <id>runLDAExperiments</id>
+                <mainClass>so.modernized.runners.LDAtoMaxEnt</mainClass>
+            </launcher>
+                <launcher>
+                    <id>runUSPCExperiments</id>
+                    <mainClass>so.modernized.runners.USPCExperimentRunner</mainClass>
+                </launcher>
+            </launchers>
         </configuration>
       </plugin>
       <plugin>

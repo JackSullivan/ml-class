@@ -1,17 +1,101 @@
-\documentclass[]{article}
+\documentclass{article}
+\usepackage{amsmath,amsfonts,amsthm,amssymb,wasysym}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{Tabbing}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{chngpage}
+\usepackage{url}
+\usepackage{subfigure}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage[color=blue!40]{todonotes}
+\usepackage[protrusion=true,expansion,kerning]{microtype}
+\usepackage{natbib}
 
-%opening
-\title{}
-\author{Sullivan, Cellier, Hobbs}
+% to adjust margins:
+\topmargin=-0.25in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.25in
+\textheight=8.5in
+\headsep=0.25in
+
+% homework specific information
+\newcommand{\hmwkTitle}{Machine Learning Paper}
+\newcommand{\hmwkDueDate}{December 6, 2013}
+\newcommand{\hmwkClass}{}
+\newcommand{\hmwkClassInstructor}{}
+\newcommand{\hmwkAuthorName}{Sullivan, Cellier, Hobbs}
+
+% math aliases
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\twopartdef}[4]
+{
+	\left\{
+		\begin{array}{ll}
+			#1 & \mbox{if } #2 \\
+			#3 & \mbox{if } #4
+		\end{array}
+	\right.
+}
+
+% header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkTitle}
+\rhead{\hmwkDueDate}   
+\lfoot{}
+\cfoot{}
+\rfoot{\emph{Page\ \thepage\ of\ \pageref{LastPage}}}                          
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\makeatletter
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+\makeatother
+
+%\renewcommand{\bibsection}{\subsubsection*{\refname}}
+
+% Make title 
+\title{
+\LARGE\bf Patent Classification using Supervised Methods \\
+\date{}
+\author{ John Sullivan \and Caitlin Cellier \and J. Nicholas Hobbs}
+}
 
 \begin{document}
 
 \maketitle
 
-\begin{abstract}
+\input{abstract}
 
-\end{abstract}
+\thispagestyle{fancy}
 
-\section{}
+\maketitle
+
+\input{intro}
+\input{dataset}
+\input{methods}
+\input{results}
+\input{contributions}
+%\input{previouswork}
+
+
+%\begin{multicols}{1}
+
+
+
+\bibliography{Sullivan_Cellier_Hobbs}
+\bibliographystyle{unsrt}
+
+%\end{multicols}
 
 \end{document}
