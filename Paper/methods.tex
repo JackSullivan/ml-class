@@ -4,13 +4,13 @@
 
 \subsection{Maximum Entropy} % (fold)
 \label{sub:maximum_entropy}
+\indent
 A maximum entropy classifier calculates a probability distribution over label classes conditioned on the observed feature vector. Usually the predicted class of a feature vector is taken to be the class with the highest probability under a learned parameterization of the distribution. The learning step simply involves estimating the natural parameters of an exponential distribution. Customarily the observed feature vector is binary. Taking $f^d$ to represent the feature vector for a single document, as above, $y$ to be the class we want to predict, and $\theta$ to be the weight vector we want to learn, this gives
 \begin{align*}
 	P(y|f, \theta) = \frac{e^{\theta \cdot f}}{\sum_{f'} e^{\theta \cdot f'}}
 \end{align*}
 
-We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. Particularly in our case where the feature vector is sparse and of very high dimensionality, it is necessary to regularize the learned weight vector $\theta$. Regularization allows us to avoid issues that arise when learned parameter weights would grow too large or be very small.
-For this paper we used the Maximum Entropy model implemented in FACTORIE.
+We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. Particularly in our case where the feature vector is sparse and of very high dimensionality, it is necessary to regularize the learned weight vector $\theta$. Regularization allows us to avoid issues that arise when learned parameter weights would grow too large or be very small. Particularly, if a given feature only appears in one class of the training data, an unregularized system will learn an infinite weight on it, since it perfectly predicts that class. On the other hand, if a feature is a very weak predictor the regularization will push the weight to zero. This acts effectively as an online dimensionality reduction. As is customary, we used an L2regularization that conceptually corresponds to putting a gaussian prior on the learned weights. For these experiments we used the Maximum Entropy model implemented in FACTORIE.
 
 % subsection maximum_entropy (end)
 
@@ -30,10 +30,15 @@ Description of SVM -------
 
 %% Tempted to make this it's own section as well
 \subsection{Dimensionality Reduction}
+There are several informal dimensionality reduction techniques that we have used to compress our very high dimensional space into a slightly smaller space. The removal of stopwords can be seen as a very basic dimensionality reduction. Similarly, TFIDF is an unsupervised dimensionality reduction technique that removes dimensions that are likely to have little predictive power.
+
+In addition to these we attempted to use two more traditional dimensionality techniques, principle component analysis (PCA), and Laplacian eigenmap. 
+
 
 Description of PCA and Laplacian
 
 
 For the second experiment, the dataset from experiment one had two different dimensionality reduction techniques used to reduce the dataset.  The two included PCA and a Laplacian Eigenmap.  (Define Training/Testing and re-run experiment)
-\subsection{Boosting Methods}
-For the third experiment, we attempted to determine if more data would noticeably improve the results of the algorithm.  Specifically, the dataset was expanded to approximately 2000 samples each. (Define Training/Testing and re-run experiment)
+
+%\subsection{Boosting Methods}
+%For the third experiment, we attempted to determine if more data would noticeably improve the results of the algorithm.  Specifically, the dataset was expanded to approximately 2000 samples each. (Define Training/Testing and re-run experiment)
