@@ -4,18 +4,33 @@
 
 \subsection{Maximum Entropy} % (fold)
 \label{sub:maximum_entropy}
+
 \indent
-A maximum entropy classifier calculates a probability distribution over label classes conditioned on the observed feature vector. Usually the predicted class of a feature vector is taken to be the class with the highest probability under a learned parameterization of the distribution. The learning step simply involves estimating the natural parameters of an exponential distribution. Customarily the observed feature vector is binary. Taking $f^d$ to represent the feature vector for a single document, as above, $y$ to be the class we want to predict, and $\theta$ to be the weight vector we want to learn, this gives
+Maximum entropy models are standard tools in document classification\cite{Nigam99usingmaximum}. A maximum entropy classifier calculates a probability distribution over label classes ($c$) conditioned on the observed feature vector. Usually the predicted class of a feature vector is taken to be the class with the highest probability under a learned parameterization of the distribution. The learning step simply involves estimating the natural parameters of an exponential distribution. Customarily the observed feature vector is binary. Taking $f(c,d)$ to represent the feature vector for a single document ($d$) being assigned to a given class, and $\theta$ to be the weight vector we want to learn, this gives
 \begin{align*}
-	P(y|f, \theta) = \frac{e^{\theta \cdot f}}{\sum_{f'} e^{\theta \cdot f'}}
+	P(c|f, \theta) = \frac{e^{\theta \cdot f(c, d)}}{\sum_{c'} e^{\theta \cdot f(c',d)}}
 \end{align*}
 
-We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. Particularly in our case where the feature vector is sparse and of very high dimensionality, it is necessary to regularize the learned weight vector $\theta$. Regularization allows us to avoid issues that arise when learned parameter weights would grow too large or be very small. Particularly, if a given feature only appears in one class of the training data, an unregularized system will learn an infinite weight on it, since it perfectly predicts that class. On the other hand, if a feature is a very weak predictor the regularization will push the weight to zero. This acts effectively as an online dimensionality reduction. As is customary, we used an L2regularization that conceptually corresponds to putting a gaussian prior on the learned weights. For these experiments we used the Maximum Entropy model implemented in FACTORIE.
+We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. 
+
+In our case where the feature vector is sparse and of very high dimensionality, it is necessary to regularize the learned weight vector $\theta$. Regularization allows us to avoid issues that arise when learned parameter weights would grow too large or be very small. If a given feature only appears in one class of the training data, an unregularized system will learn an infinite weight on it, since it perfectly predicts that class. Conversely, if a feature is a very weak predictor the regularization will push the weight to zero. This acts effectively as an online dimensionality reduction. As is customary, we used a regularization technique that conceptually corresponds to putting a standard normal prior on the learned weights. For these experiments we used the Maximum Entropy model implemented in FACTORIE, which uses LBFGS\cite{Liu89onthe} to perform the gradient descent necessary to estimate parameters.
 
 % subsection maximum_entropy (end)
 
-\subsection{Multiclass SVM} % (fold)
+\subsection{Multi-class SVM} % (fold)
 \label{sub:multiclass_svm}
+
+Given a sequence of training examples $(c, x)$ where $c \in \mathbf{C}$ and $x = f(\cdot, d)$ for each $d \in \mathbf{D}$. We define binary functions $y_c(c
+') = \twopartdef{1}{ c' = c}{0}{otherwise}$. For multi-class classification we train $| \mathbf{C} |$ binary classifiers. For each class we train a support vector machine by solving a constrained minimization problem for the weight vector:
+\begin{align*}
+	\min_{w,\xi} & \left( \frac{1}{2} \| \mathbf{w} \|^2 + C \sum_{i=1}^n \xi_i \right) \\
+	\text{subject to} &  \text{ } \forall i, \text{ } y_i(w \cdot x_i - b) > 1 - \xi_i, \text{ } \xi_i > 0
+\end{align*}
+
+There are a number of black-box SVM implementations that can efficiently train an SVM with multiple different parameter settings. We used LIBSVM\cite{CC01a} to run our SVM experiments. The implementation uses a sequential minimum optimization technique\cite{Fan05workingset} to efficiently minimize $w$. We used linear kernels for all of our experiments, as they have proven useful for document classification in the past\cite{DBLP:conf/ecml/Joachims98}.
+
+
+%All of our experiments were run with a linear kernel at the default settings. % WHAT ARE THEY?
 
 
 % subsection multiclass_svm (end)
@@ -24,7 +39,7 @@ We can estimate the parameters of this distribution easily using standard convex
 %\subsection{Supervised Methods}
 %For the first experiment, the dataset was created such that each of the 7 classification categories were evenly represented with 200? samples each.  (Define Training/Testing and re-run experiment)
 
-Description of SVM -------
+%Description of SVM -------
 
 
 
@@ -35,10 +50,10 @@ There are several informal dimensionality reduction techniques that we have used
 In addition to these we attempted to use two more traditional dimensionality techniques, principle component analysis (PCA), and Laplacian eigenmap. 
 
 
-Description of PCA and Laplacian
+%Description of PCA and Laplacian
 
 
-For the second experiment, the dataset from experiment one had two different dimensionality reduction techniques used to reduce the dataset.  The two included PCA and a Laplacian Eigenmap.  (Define Training/Testing and re-run experiment)
+%For the second experiment, the dataset from experiment one had two different dimensionality reduction techniques used to reduce the dataset.  The two included PCA and a Laplacian Eigenmap.  (Define Training/Testing and re-run experiment)
 
 %\subsection{Boosting Methods}
 %For the third experiment, we attempted to determine if more data would noticeably improve the results of the algorithm.  Specifically, the dataset was expanded to approximately 2000 samples each. (Define Training/Testing and re-run experiment)

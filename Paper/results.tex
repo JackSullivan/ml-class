@@ -52,21 +52,18 @@ Features & Laplacian Eigenmap & PCA Accuracy \\ \hline
 \subsection{Dataset Size}
 For the third set of experiments we wanted to determine to what extent more data would begin to alter the accuracy the algorithms.  We use the the jagged-20000 and jagged-40000 datasets which each included description-unigrams.
 
-\begin{figure}[!ht]
-\begin{center}
-\caption{Dataset Size and Testing Accuracy}
-\begin{tabular}{| l | l | l |}
+\begin{table}[Ht]
+\caption{Testing Accuracy with \emph{description-unigrams} features}
+\centering
+\begin{tabular}{| r | c | c |}
 \hline
-Dataset & Classifier & Testing Accuracy \\ \hline
-3500 & SVM & 49.33\% \\ \hline
-20000 & SVM & ? \\ \hline
-40000 & SVM & 69.53\% \\ \hline
-3500 & MaxEnt & 46.12\% \\ \hline
-20000 & MaxEnt & ? \\ \hline
-40000 & MaxEnt & 69.75\% \\ \hline
+Dataset & SVM & Maximum Entropy \\ \hline
+\emph{even-3500} & 49.33\% & 46.12\% \\ \hline
+\emph{jagged-20000} & ? & ? \\ \hline
+\emph{jagged-40000} & 69.53\% & 69.75\% \\ \hline
 \end{tabular}
-\end{center}
-\end{figure}
+\end{table}
+%\end{figure}
 
 \subsection{Abstract Bigrams}
 For the fourth experiment, the jagged-40000 dataset was used with abstract-bigrams used as the features.  The results indicate that the support vector machine had an accuracy of 72.12\% and the maximum entropy algorithm had an accuracy of 72.57\%.  Overall, this is a slight improvement from experiment 3 of 3\% for the support vector machine and an increase of 3\% for the maximum entropy classifier.
