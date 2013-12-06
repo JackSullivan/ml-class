@@ -155,7 +155,7 @@ object Patent {
 
   }
 
-  def writeSparseVector(patents:Iterator[Patent], labelFun:(Patent => Patent.Label), filename:String, fileSize:Int) {
+  def writeSparseVector(patents:Iterator[Patent], filename:String, fileSize:Int) {
     var fileNum = 0
     var itemNum = 1
     var wrt = new BufferedWriter(new FileWriter("%s_%d.vec".format(filename, fileNum)))
@@ -163,7 +163,7 @@ object Patent {
     patents.zipWithIndex.foreach{ case (patent, index) =>
       wrt.write(patent.asVectorString(index))
       wrt.write("\n")
-      labelWrt.write("%d %d".format(index + 1, labelFun(patent).intValue + 1))
+      labelWrt.write("%d %d".format(index + 1, patent.iprcLabel.intValue + 1))
       labelWrt.write("\n")
       itemNum += 1
       if(itemNum > fileSize) {

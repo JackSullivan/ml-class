@@ -22,17 +22,18 @@ object GenerateEvenSparseVectors {
   def main(args:Array[String]) {
     val dataDir = args(0)
     val outputPrefix = args(1)
-    val labelFun = args(2) match {
-      case "cpc" => p:Patent => p.iprcLabel
-      case "us" => p:Patent => p.uspcLabel
-      case other => throw new Exception("Unsupported label: %s" format other)
-    }
+    val numberFeatures = args(2)
+    val numPatents = args(3).toInt
+//      case "us" => p:Patent => p.uspcLabel
+//      case other => throw new Exception("Unsupported label: %s" format other)
+//    }
     implicit val random = scala.util.Random
-    val numberVecs = args(3).toInt
+    //val numberVecs = args(3).toInt
 
     //val (testIter, trainIter) = new TrainTestSplit(150, labelFun).apply(new PatentRegularizer(numberVecs, labelFun).apply(PatentPipeline(dataDir)))
 
-    val patents = PatentPipeline(dataDir).take(40000)
+    val patents = PatentPipeline(dataDir).take(numPatents)
+    val tfidfVals = preparetfidf(train)
     //val svm = new SVMExperiment(labelFun)
     //val max = new MaxEntExperiment(labelFun)
     //val nb = new NaiveBayesExperiment(labelFun)
@@ -44,7 +45,7 @@ object GenerateEvenSparseVectors {
     //println(nb.runExperiment(trainLabels, testLabels))
 
 
-    Patent.writeSparseVector(patents, labelFun, outputPrefix, 100000)
+    Patent.writeSparseVector(patents, outputPrefix, 100000)
 
     //Patent.writeSparseVector(patents._2 ++ patents._1, labelFun, outputPrefix + "_all")
     //Patent.writeSparseVector(patents._2, labelFun, outputPrefix + "_test")
