@@ -30,11 +30,11 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   private def generateFeatures(claims:Iterable[Iterable[String]], abs:Iterable[String], titleTokens:Iterable[String]):Patent.Features = {
     val fs = abs ++
-             abs.sliding(2).map(_.mkString(" ")).toSeq ++
+             //abs.sliding(2).map(_.mkString(" ")).toSeq ++
              claims.flatten ++
-             claims.map(_.sliding(2).map(_.mkString(" "))).flatten ++
-             titleTokens ++
-             titleTokens.sliding(2).map(_.mkString(" ")).toSeq
+             //claims.map(_.sliding(2).map(_.mkString(" "))).flatten ++
+             titleTokens
+             //titleTokens.sliding(2).map(_.mkString(" ")).toSeq
 
     new Patent.Features(fs)
   }
@@ -43,8 +43,8 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   private lazy val preparedTitle:Iterable[String] = alphaSegmenter(title).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
   private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
-  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
-  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
+  lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
+  lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
   def asVectorString(docNumber:Int) = iprcLabel.features.value.activeElements.map { case (index, value) =>
     "%d %d %.3f".format(docNumber + 1, index + 1, value)
   }.mkString("\n")

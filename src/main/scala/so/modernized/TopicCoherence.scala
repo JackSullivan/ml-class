@@ -2,16 +2,33 @@ package so.modernized
 
 import java.util.HashMap
 import scala.collection._
-import java.io.{File}
+import java.io.{FileWriter, BufferedWriter, File}
 import scala.math._
 import scala.Predef._
 import cc.factorie.variable.CategoricalSeqDomain
+import so.modernized.runners.DataAnalyzer
 
 
 object TopicCoherence {
   def main(args:Array[String]){
-    val patents = PatentPipeline(args(0)).toIterable
-    val topicfile = args(1)
+    val dataDir = args(0)
+    val patents = PatentPipeline(dataDir).take(40000).toIterable
+    implicit val random = scala.util.Random
+    val tfidfVals = DataAnalyzer.preparetfidf(patents)
+
+    val catTopics =new BufferedWriter(new FileWriter("trueCategorytopics.txt"))
+    //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
+    tfidfVals.zipWithIndex.foreach{ case (tfidfVal, categoryIndex)=>
+      val buffer = new StringBuffer
+      buffer.append("topic" + categoryIndex+"\t")
+      tfidfVal.foreachActiveElement{ case (index, value) =>
+        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
+      }
+      catTopics.write(buffer.toString)
+      catTopics.write("\n")
+    }
+    catTopics.close()
+    val topicfile = "trueCategorytopics.txt"
     val wordcount =args(2).toInt
     val output = args(3)
     val topic_highfrequencyword_list = generateHighTopicFrequenciesList(topicfile, wordcount)
@@ -51,7 +68,8 @@ object TopicCoherence {
 //        topword+=word
 //      }
 
-      topic_highfrequencyword_list(topic_words(0)) = topic_words.drop(0).toVector
+      topic_highfrequencyword_list(topic_words(0)) = topic_words.drop(0).toVector.map{t => println(t);t}.filterNot(_.split(' ').length > 1).filterNot(_.startsWith("topic"))
+
     }
     topic_words_file.close()
     topic_highfrequencyword_list
@@ -99,21 +117,24 @@ object TopicCoherence {
     println("Co-document frequencies "+codocument_frequencies)
     println("Reading documents")
     implicit object WordDomain extends CategoricalSeqDomain[String]
+    val doc_hash = new HashMap[String,Int]
      patents.foreach{patent=>
      count=count+1
      //println("Line count :" +count)
-      val doc = patent.asLDADocument
-      val doc_hash = new HashMap[String,Int]
-      for(type_values <- doc.ws.categoryValues) {
+      //val doc = patent.asLDADocument
+
+
+     val docWords = patent.preparedAbs ++ patent.preparedClaims.flatten
+      for(type_values <- docWords) {
         if(!doc_hash.containsKey(type_values)){
             doc_hash.put(type_values,0)
         }
-
       }
 
        for(vl<-types) {
         if(doc_hash.containsKey(vl)){
           val newcount = document_frequencies.get(vl)+1
+          //println("Reached")
           document_frequencies.put(vl,newcount)
         }
        }
@@ -123,12 +144,15 @@ object TopicCoherence {
          val pair = pairs.split(" ")
          //println(pair(0))
          if(doc_hash.containsKey(pair(0)) && doc_hash.containsKey(pair(1))){
+           //println("Reached2")
            val newcount = codocument_frequencies.get(pairs)+1
            codocument_frequencies.put(pairs,newcount)
          }
        }
 
     }
+    println("Document frequencies " +document_frequencies)
+    println("Co-document frequencies "+codocument_frequencies)
 
 
 

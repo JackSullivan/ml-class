@@ -58,7 +58,7 @@ object DataAnalyzer {
     val idfs = idfCounts(patentVecs)
     println("generated idf counts")
     val counts = patentVecs.size
-    patentVecs.foreach{patentVec => tfidf(patentVec, idfs, counts); trimBagTopK(patentVec,32)}
+    patentVecs.foreach{patentVec => tfidf(patentVec, idfs, counts); trimBagTopK(patentVec,20)}
     //patentVecs.foreach(trimBagTopK(_,10))
     patentVecs
   }
@@ -84,7 +84,7 @@ object DataAnalyzer {
 
   def compressBags(ents:Iterable[Patent]) {
     ents.foreach{ ent =>
-      trimBagTopK(ent.iprcLabel.features.value, 50)
+      trimBagTopK(ent.iprcLabel.features.value,50)
     }
   }
 

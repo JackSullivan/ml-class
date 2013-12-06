@@ -47,7 +47,7 @@ object GenerateEvenSparseVectors {
     //println(nb.runExperiment(trainLabels, testLabels))
 
 
-    Patent.writeSparseVector(patents.toIterator, outputPrefix, 100000)
+    Patent.writeSparseVector(patents.toIterator, outputPrefix, 40000)
 
     //Patent.writeSparseVector(patents._2 ++ patents._1, labelFun, outputPrefix + "_all")
     //Patent.writeSparseVector(patents._2, labelFun, outputPrefix + "_test")

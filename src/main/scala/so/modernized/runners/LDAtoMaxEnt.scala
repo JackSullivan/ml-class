@@ -15,7 +15,7 @@ import scala.Some
 object LDAtoMaxEnt {
   def performLDA(trainPatents: Iterable[Patent], testPatents: Iterable[Patent])(implicit random: Random){
     val ldaEx = new LDAExperiment(trainPatents,7)(random)
-    println(ldaEx.lda.topicsWordsAndPhrasesSummary(1000, 10))
+    println(ldaEx.lda.topicsWordsAndPhrasesSummary(30, 30))
     new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
     testPatents.foreach{
       testPatent =>
