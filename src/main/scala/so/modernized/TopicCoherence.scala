@@ -36,18 +36,21 @@ object TopicCoherence {
     val topic_words_file = scala.io.Source.fromFile(new File(fileName))
     for (line <- topic_words_file.getLines()) {
       val topic_words = line.split("\t")
-      val topWords = topic_words.slice(0,wordcount)
+      //var topWord:Vector[String] = Vector()
+
+     // val topWords = topic_words.slice(1,wordcount+1)
       //val topWord:Vector[String] = Vector()
     //  topWords.foldLeft[Vector[String]](topWord){_ :+ _}
     //  assert(!topWord.isEmpty)
-      //topwords.foreach{word =>  topword = topword :+ word}
+//      topWords.foreach{word =>  topWord.:+(word)}
+//
+//      //println(topword)
+//      var topword:Vector[String] = Vector()
+//      for(word <- topWords){
+//        topword+=word
+//      }
 
-      //println(topword)
-      var topword:Vector[String] = Vector()
-      for(word <- topWords){
-        topword:+word
-      }
-      topic_highfrequencyword_list("topic"+topic_words(0)) = topword
+      topic_highfrequencyword_list(topic_words(0)) = topic_words.drop(0).toVector
     }
     topic_words_file.close()
     topic_highfrequencyword_list
@@ -79,8 +82,8 @@ object TopicCoherence {
     // Initialising term pair document frequencies
     println("Initialising term pair document frequencies")
     for(i <- 0 to numtopics-1){
-      for(m <- 1 to wordcount-1){
-       val vm =topic_highfrequencyword_list.apply("topic"+i)(m)
+      for(m <- 1 to wordcount-2){
+       val vm =topic_highfrequencyword_list.get("topic"+i).get(m)
        for(l<- 0 to m-1){
           val vl = topic_highfrequencyword_list.apply("topic"+i)(l)
           if((!codocument_frequencies.containsKey(vm+" "+vl)) && (!codocument_frequencies.containsKey(vl+" "+vm))){
@@ -97,7 +100,7 @@ object TopicCoherence {
     implicit object WordDomain extends CategoricalSeqDomain[String]
      patents.foreach{patent=>
      count=count+1
-     println("Line count :" +count)
+     //println("Line count :" +count)
       val doc = patent.asLDADocument
       val doc_hash = new HashMap[String,Int]
       for(type_values <- doc.ws.categoryValues) {

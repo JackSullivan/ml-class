@@ -96,6 +96,10 @@
                     <mainClass>so.modernized.runners.MaxEntRunner</mainClass>
                 </launcher>
                 <launcher>
+                    <id>runTopicCoherence</id>
+                    <mainClass>so.modernized.TopicCoherence</mainClass>
+                </launcher>
+                <launcher>
                     <id>runNaiveBayes</id>
                     <mainClass>so.modernized.runners.NaiveBayes</mainClass>
                 </launcher>
