@@ -1,6 +1,48 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-The United States Patent Office granted 276,788 patents in 2012\cite{USPTO:2013:stats}. This is more than double the number granted 20 years ago. Many of these patents are awarded to so-called nonpracticing entities (NPEs), organizations that do not design, build (or even prototype) the techniques and technologies under patent, but rather create or invest in patent portfolios to litigate against organizations or individuals that build related products.
+The United States Patent Office granted 276,788 patents in 2012\cite{USPTO:2013:stats}. This is more than double the number granted 20 years ago, and rate of filings is still increasing. In the circumstance it makes sense to consider scalable, automated approaches to parts of the patent review process. To this end we examined both attempting to classify patents into existing categorizations using supervised machine learning techniques, and creating alternative categorizations using unsupervised machine learning techniques. We also attempted to measure the coherency of the existing classifications. Reliable automation of patent categorization is an important first step to larger scale automation of the patent review process.
+
+
+
+Specifically, we considered the use of machine learning classifiers to automatically categorize patents into each of the 8 patent categories specified in the International Patent Classification\cite{ipc:2013:guide}. The USPTO is moving from its previous classification system (which contained thousands of classes and was deemed unusable for this project) to the Cooperative Patent Classification, which is a superset of the IPC. US patent grants since <FIND A YEAR> have been labelled with an IPC Classification in preparation for this turn over.
+
+% multiple categories can be assigned
+% CPC has cross-category
+% Break out category talk to separate section/move to dataset
+% talk more about size of task and need for speed
+
+% Difference between CPC and IPC
+% Relative size of categories?
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ | l | l |}
+		\hline
+		\textbf{Class} & \textbf{Title} \\
+				\hline
+		A & Human Necessities \\
+				\hline
+		B & Performing Operations; Transporting \\
+				\hline
+		C & Chemistry; Metallurgy \\
+				\hline
+		D & Textiles; Paper \\
+				\hline
+		E & Fixed Constructions \\
+				\hline
+		F & Mechanical Engineering; Lighting; Heating; Weapons; Blasting Engines or Pumps \\
+		\hline
+		G & Physics \\
+				\hline
+		H & Electricity \\
+				\hline
+	\end{tabular}
+	\caption{IPC Classifications and their titles}
+\end{table}
+
+
+
+%Many of these patents are awarded to so-called nonpracticing entities (NPEs), organizations that do not design, build (or even prototype) the techniques and technologies under patent, but rather create or invest in patent portfolios to litigate against organizations or individuals that build related products. At the same time, patent litigation has been increasing, particularly litigation initiated by NPEs\cite[p. 7]{PWC:2013:lit}. In such an environment, it is more important than ever to be able to quickly and reliably assess the quality of patents, both in terms of their content, and whether they represent truly original work. 
 
 % More Here!!
 

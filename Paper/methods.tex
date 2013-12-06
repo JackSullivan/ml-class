@@ -1,11 +1,39 @@
-\section{Methods}
+\section{Classification Techniques}
 %%Just have dataset here instead of a whole separate section? If it's in it's own section then we can give a fuller background on the classes and maybe an explanation of the coherence scores
 %\subsection{Data Set}
 
-\subsection{Supervised Methods}
-For the first experiment, the dataset was created such that each of the 7 classification categories were evenly represented with 200? samples each.  (Define Training/Testing and re-run experiment)
+\subsection{Maximum Entropy} % (fold)
+\label{sub:maximum_entropy}
+A maximum entropy classifier calculates a probability distribution over label classes conditioned on the observed feature vector. Usually the predicted class of a feature vector is taken to be the class with the highest probability under a learned parameterization of the distribution. The learning step simply involves estimating the natural parameters of an exponential distribution. Customarily the observed feature vector is binary. Taking $f^d$ to represent the feature vector for a single document, as above, $y$ to be the class we want to predict, and $\theta$ to be the weight vector we want to learn, this gives
+\begin{align*}
+	P(y|f, \theta) = \frac{e^{\theta \cdot f}}{\sum_{f'} e^{\theta \cdot f'}}
+\end{align*}
+
+We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. Particularly in our case where the feature vector is sparse and of very high dimensionality, it is necessary to regularize the learned weight vector $\theta$. Regularization allows us to avoid issues that arise when learned parameter weights would grow too large or be very small.
+For this paper we used the Maximum Entropy model implemented in FACTORIE.
+
+% subsection maximum_entropy (end)
+
+\subsection{Multiclass SVM} % (fold)
+\label{sub:multiclass_svm}
+
+
+% subsection multiclass_svm (end)
+
+
+%\subsection{Supervised Methods}
+%For the first experiment, the dataset was created such that each of the 7 classification categories were evenly represented with 200? samples each.  (Define Training/Testing and re-run experiment)
+
+Description of SVM -------
+
+
+
 %% Tempted to make this it's own section as well
 \subsection{Dimensionality Reduction}
+
+Description of PCA and Laplacian
+
+
 For the second experiment, the dataset from experiment one had two different dimensionality reduction techniques used to reduce the dataset.  The two included PCA and a Laplacian Eigenmap.  (Define Training/Testing and re-run experiment)
 \subsection{Boosting Methods}
 For the third experiment, we attempted to determine if more data would noticeably improve the results of the algorithm.  Specifically, the dataset was expanded to approximately 2000 samples each. (Define Training/Testing and re-run experiment)

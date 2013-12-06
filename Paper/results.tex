@@ -1,1 +1,86 @@
 \section{Results}
+\subsection{Experiment 1: Baseline}
+In the first experiment, our dataset consisted of approximately 3500 patents.  The data was evenly split over the each of the 7 categories.
+The training data consisted of 70\% of the data while the testing data consisted of 30\% of the data.  The following is the result of the testing
+set.
+\\
+\\Support Vector Machine: 49.3\% Accuracy
+\\Maximum Entropy: 46\% Accuracy
+\\
+\\Because the data is evenly split, a random choice would expect the results to be near 14\%, which means that even with these
+base algorithms, the results are above chance.
+\subsection{Experiment 2: Dimensionality Reduction}
+In the second experiment, we selected two different dimensionality reduction techniques, principle component analysis, and laplacian eigenmap.
+The two dimensionality techniques were then applied to the dataset from Experiment 1.  The results are shown in two tables below.
+\\
+\begin{table}[h]
+\caption{Maximum Entropy with Dimensionally Reduction}
+\centering
+\begin{tabular}{c c c}
+Features & Laplacian Eigenmap & PCA Accuracy \\
+3 & 15 & 18 \\
+10 & 24 & 28 \\
+50 & 30 & 52 \\
+100 & 35 & 52 \\
+1000 & 44 & 59 \\
+\end{tabular}
+\end{table}
+\\
+\begin{table}[h]
+\caption{SVM with Dimensionally Reduction}
+\centering
+\begin{tabular}{c c c}
+Features & Laplacian Eigenmap & PCA Accuracy \\
+3 & 17 & 18 \\
+10 & 18 & 26 \\
+50 & 26 & 26 \\
+100 & 31 & 32 \\
+1000 & 35 & 42 \\
+\end{tabular}
+\end{table}
+\\
+\\ Visualization of these tables are shown here.
+\\ Insert graphs here
+\\
+The results are unclear.  This is due to the fact that compared with the baseline Maximum Entropy had an icnrease in its testing accuracy, however
+the support vector machine had a decrease in its testing accuracy.  Therefore, the results of dimensionality reduction appears to be dependent
+on the classifier which was used.
+\\
+\\ Graphs of these results are shown below.
+Insert Graphs here!
+\\
+\subsection{Experiment 3}
+In the third experiment we attempted to increase the sample size of our dataset to determine if this would noticeably increase accuracy when
+compared against the baseline.  The dataset was increased to 20000 and 40000.  The results are shown below.
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\begin{table}[h]
+\caption{Dataset Incrase}
+\centering
+\begin{tabular}{c c c}
+Dataset & Classifier & Testing Accuracy \\
+3500 & SVM & 49 \\
+20000 & SVM & 70 \\
+40000 & SVM & Timed Out \\
+3500 & MaxEnt & 46 \\
+20000 & MaxEnt & ?? \\
+40000 & MaxEnt & 70 \\
+\end{tabular}
+\end{table}
+\\
+These results imply that increasing the dataset did greatly improve the accuracy on the testing set.
+
+\subsection{Experiment 4}
+We then changed the features of dataset to....
+\\SVM 40000 new features: 72\%
+\\Maximum Entropy new features: 73\% 
+
+
+\subsection{Experiment 5}
+Are we still doing an unsupervised portion?
