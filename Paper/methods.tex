@@ -9,7 +9,8 @@ A maximum entropy classifier calculates a probability distribution over label cl
 	P(y|f, \theta) = \frac{e^{\theta \cdot f}}{\sum_{f'} e^{\theta \cdot f'}}
 \end{align*}
 
-We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. For this paper we used the Maximum Entropy model implemented in FACTORIE.
+We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. Particularly in our case where the feature vector is sparse and of very high dimensionality, it is necessary to regularize the learned weight vector $\theta$. Regularization allows us to avoid issues that arise when learned parameter weights would grow too large or be very small.
+For this paper we used the Maximum Entropy model implemented in FACTORIE.
 
 % subsection maximum_entropy (end)
 
