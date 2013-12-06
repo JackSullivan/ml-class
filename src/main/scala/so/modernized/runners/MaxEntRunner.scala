@@ -13,7 +13,10 @@ import cc.factorie._
 object MaxEntRunner {
   def main(args: Array[String]){
     val dataDir = args(0)
-    val patents = PatentPipeline(dataDir).take(40000)
+    val patents = PatentPipeline(dataDir).toList//take(20000)
+    patents.foreach{_.iprcLabel}
+    Patent.preparetfidf(patents)
+    Patent.compressBags(patents)
     implicit val random = scala.util.Random
 
     val (train, test) = patents.toList.split(0.7)

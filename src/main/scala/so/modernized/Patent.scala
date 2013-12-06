@@ -67,6 +67,7 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        claim
        diagram
        picture
+       method
        1
        2
        3
@@ -79,6 +80,11 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        0
        invent
        preferably
+       comprising
+       comprises
+       includes
+       including
+       provided
        system
        image
        chart
@@ -143,7 +149,7 @@ object Patent {
 
   class Label(val features:Features, labelString:String, val domain: CategoricalDomain[String]) extends LabeledCategoricalVariable[String](labelString)
 
-  class Features(features:Iterable[String]) extends BinaryFeatureVectorVariable[String] {
+  class Features(features:Iterable[String]) extends FeatureVectorVariable[String] {
     this ++= features
     def domain = Patent.FeatureDomain
 

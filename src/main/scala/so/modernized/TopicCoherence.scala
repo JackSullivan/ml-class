@@ -10,8 +10,8 @@ import cc.factorie.variable.CategoricalSeqDomain
 
 object TopicCoherence {
   def main(args:Array[String]){
-    val patents = PatentPipeline(args(1)).toIterable
-    val topicfile = args(0)
+    val patents = PatentPipeline(args(0)).toIterable
+    val topicfile = args(1)
     val wordcount =args(2).toInt
     val output = args(3)
     val topic_highfrequencyword_list = generateHighTopicFrequenciesList(topicfile, wordcount)
@@ -35,19 +35,19 @@ object TopicCoherence {
     println("Reading topic file")
     val topic_words_file = scala.io.Source.fromFile(new File(fileName))
     for (line <- topic_words_file.getLines()) {
-      val topic_words = line.split(" ")
-      val topwords = topic_words.slice(1,wordcount+1)
-      var topword:Vector[String] = Vector()
-      topwords.foldLeft[Vector[String]](topword){_ :+ _}
-      assert(topword.isEmpty)
-      topwords.foreach{word =>  topword = topword :+ word}
+      val topic_words = line.split("\t|\t")
+      val topWords = topic_words.slice(0,wordcount)
+      val topWord:Vector[String] = Vector()
+      topWords.foldLeft[Vector[String]](topWord){_ :+ _}
+      assert(!topWord.isEmpty)
+      //topwords.foreach{word =>  topword = topword :+ word}
 
       //println(topword)
       /*var topword:Vector[String] = Vector()
       for(word <- topwords){
         topword+=word
       } */
-      topic_highfrequencyword_list("topic"+topic_words(0)) = topword
+      topic_highfrequencyword_list("topic"+topic_words(0)) = topWord
     }
     topic_words_file.close()
     topic_highfrequencyword_list

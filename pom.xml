@@ -111,6 +111,10 @@
                     <id>runUSPCExperiments</id>
                     <mainClass>so.modernized.runners.USPCExperimentRunner</mainClass>
                 </launcher>
+                <launcher>
+                    <id>runDataAnalyzer</id>
+                    <mainClass>so.modernized.runners.DataAnalyzer</mainClass>
+                </launcher>
             </launchers>
         </configuration>
       </plugin>
