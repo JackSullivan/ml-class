@@ -45,7 +45,7 @@ There are a number of black-box SVM implementations that can efficiently train a
 
 %% Tempted to make this it's own section as well
 \subsection{Dimensionality Reduction}
-There are several informal dimensionality reduction techniques that we have used to compress our very high dimensional space into a slightly smaller space. The removal of stopwords can be seen as a very basic dimensionality reduction. Similarly, \emph{tf-idf} is an unsupervised dimensionality reduction technique that removes dimensions that are likely to have little predictive power.  
+There are several informal dimensionality reduction techniques that we have used to compress our very high dimensional space into a slightly smaller space. The removal of stopwords can be seen as a very basic dimensionality reduction. Similarly, tf-idf is an unsupervised dimensionality reduction technique that removes dimensions that are likely to have little predictive power.  
 \\
 \\In addition to these we attempted to use two more traditional dimensionality techniques, principle component analysis (PCA), and Laplacian eigenmap.  For our purposes, we used a MATLAB script titled mani.m by Todd Wittmann \cite{Wittman}.   Saul et al. \cite{saul06spectral} provide an intuitive explanation of PCA that is very useful for understanding it.  They state PCA can be viewed as trying to find a set of features which is able to replicate the original variance structure.  During dimensionality reduction, the features are ordered such that the features which maximize the variance are selected first.  They further state that the Laplacian Eigenmap allows for local mappings between inputs to be maintained.  These intuitive descriptions are useful for understanding the results found in our experimental sections.
 
