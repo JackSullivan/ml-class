@@ -30,10 +30,10 @@ object DataAnalyzer {
     val tfidfVals = preparetfidf(train)
     val coherenceFile =new BufferedWriter(new FileWriter("trueCategorytopics"))
     //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
-    tfidfVals.zipWithIndex.foreach{ case (tfidfVal, categoryIndex)=>
+    tfidfVals.foreach{ case tfidfVal=>
       val buffer = new StringBuffer
-      buffer.append("topic" + categoryIndex+"\t")
-      tfidfVal.foreachActiveElement{ case (index, value) =>
+      buffer.append("topic" + tfidfVal._1+"\t")
+      tfidfVal._2.foreachActiveElement{ case (index, value) =>
         buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
       }
       coherenceFile.write(buffer.toString)
@@ -51,15 +51,15 @@ object DataAnalyzer {
     //groupedPatents.foreach{case (label,classPatents)}
   }
 
-  def preparetfidf(patents:Iterable[Patent]):Iterable[Tensor1] ={
-    val otherVecs = patents.groupBy(_.iprcSections.head).map{_._2.map{_.iprcLabel.features.value}}
-    val patentVecs = otherVecs.map{th => th.reduce(_+_)}
+  def preparetfidf(patents:Iterable[Patent]):Map[String,Tensor1] ={
+    val otherVecs = patents.groupBy(_.iprcSections.head).map{group => (group._1, group._2.map{_.iprcLabel.features.value})}
+    val patentVecs = otherVecs.map{case (group, vectors) => (group,vectors.reduce(_+_))}
     println(patentVecs.size)
-    val idfs = idfCounts(patentVecs)
+    val idfs = idfCounts(patentVecs.unzip._2)
     println("generated idf counts")
     val counts = patentVecs.size
-    patentVecs.foreach{patentVec => tfidf(patentVec, idfs, counts); trimBagTopK(patentVec,20)}
-    //patentVecs.foreach(trimBagTopK(_,10))
+    patentVecs.foreach{patentVec => tfidf(patentVec._2, idfs, counts); trimBagTopK(patentVec._2,20)}
+
     patentVecs
   }
   def idfCounts(docs:Iterable[Tensor1]):Map[Int, Double] = docs.flatMap{_.activeElements}.groupBy(_._1).seq.mapValues(_.view.map(_._2).sum)

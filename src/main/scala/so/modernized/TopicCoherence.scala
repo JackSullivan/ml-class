@@ -18,10 +18,10 @@ object TopicCoherence {
 
     val catTopics =new BufferedWriter(new FileWriter("trueCategorytopics.txt"))
     //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
-    tfidfVals.zipWithIndex.foreach{ case (tfidfVal, categoryIndex)=>
+    tfidfVals.foreach{ tfidfVal=>
       val buffer = new StringBuffer
-      buffer.append("topic" + categoryIndex+"\t")
-      tfidfVal.foreachActiveElement{ case (index, value) =>
+      buffer.append("topic" + tfidfVal._1+"\t")
+      tfidfVal._2.foreachActiveElement{ case (index, value) =>
         buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
       }
       catTopics.write(buffer.toString)
@@ -51,9 +51,9 @@ object TopicCoherence {
     val topic_highfrequencyword_list = new mutable.HashMap[String,Vector[String]]
     println("Reading topic file")
     val topic_words_file = scala.io.Source.fromFile(new File(fileName))
-    for (line <- topic_words_file.getLines()) {
+    for (line <- topic_words_file.getLines().zipWithIndex) {
       println("Line Read")
-      val topic_words = line.split("\t")
+      val topic_words = line._1.split("\t")
       //var topWord:Vector[String] = Vector()
 
      // val topWords = topic_words.slice(1,wordcount+1)
@@ -68,7 +68,7 @@ object TopicCoherence {
 //        topword+=word
 //      }
 
-      topic_highfrequencyword_list(topic_words(0)) = topic_words.drop(0).toVector.map{t => println(t);t}.filterNot(_.split(' ').length > 1).filterNot(_.startsWith("topic"))
+      topic_highfrequencyword_list("topic"+line._2) = topic_words.drop(0).toVector.map{t => println(t);t}.filterNot(_.split(' ').length > 1).filterNot(_.startsWith("topic"))
 
     }
     topic_words_file.close()
@@ -124,7 +124,7 @@ object TopicCoherence {
       //val doc = patent.asLDADocument
 
 
-     val docWords = patent.preparedAbs ++ patent.preparedClaims.flatten
+     val docWords = patent.iprcLabel.features.activeCategories
       for(type_values <- docWords) {
         if(!doc_hash.containsKey(type_values)){
             doc_hash.put(type_values,0)
