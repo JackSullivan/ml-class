@@ -91,10 +91,26 @@
                 <jvmArg>-Xmx6g</jvmArg>
             </jvmArgs>
             <launchers>
+                <launcher>
+                    <id>runMaxEnt</id>
+                    <mainClass>so.modernized.runners.MaxEntRunner</mainClass>
+                </launcher>
+                <launcher>
+                    <id>runTopicCoherence</id>
+                    <mainClass>so.modernized.TopicCoherence</mainClass>
+                </launcher>
+                <launcher>
+                    <id>runNaiveBayes</id>
+                    <mainClass>so.modernized.runners.NaiveBayes</mainClass>
+                </launcher>
             <launcher>
                 <id>runSupervisedExperiments</id>
                 <mainClass>so.modernized.runners.IPRCExperimentRunner</mainClass>
             </launcher>
+                <launcher>
+                    <id>runGenerate</id>
+                    <mainClass>so.modernized.runners.GenerateEvenSparseVectors</mainClass>
+                </launcher>
                 <launcher>
                 <id>runLDAExperiments</id>
                 <mainClass>so.modernized.runners.LDAtoMaxEnt</mainClass>
@@ -102,6 +118,10 @@
                 <launcher>
                     <id>runUSPCExperiments</id>
                     <mainClass>so.modernized.runners.USPCExperimentRunner</mainClass>
+                </launcher>
+                <launcher>
+                    <id>runDataAnalyzer</id>
+                    <mainClass>so.modernized.runners.DataAnalyzer</mainClass>
                 </launcher>
             </launchers>
         </configuration>

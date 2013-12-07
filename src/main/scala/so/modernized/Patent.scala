@@ -30,11 +30,11 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   private def generateFeatures(claims:Iterable[Iterable[String]], abs:Iterable[String], titleTokens:Iterable[String]):Patent.Features = {
     val fs = abs ++
-             abs.sliding(2).map(_.mkString(" ")).toSeq ++
+             abs.sliding(2).map(_.mkString(" ").toLowerCase()).toSeq ++
              claims.flatten ++
-             claims.map(_.sliding(2).map(_.mkString(" "))).flatten ++
-             titleTokens ++
-             titleTokens.sliding(2).map(_.mkString(" ")).toSeq
+             claims.map(_.sliding(2).map(_.mkString(" ").toLowerCase())).flatten ++
+             titleTokens
+             titleTokens.sliding(2).map(_.mkString(" ").toLowerCase()).toSeq
 
     new Patent.Features(fs)
   }
@@ -43,8 +43,8 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   private lazy val preparedTitle:Iterable[String] = alphaSegmenter(title).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
   private lazy val preparedDesc:Iterable[String] = alphaSegmenter(desc).filterNot(token=>PatentStopWords.contains(token.toLowerCase)).toSeq
-  private lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
-  private lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
+  lazy val preparedClaims:Iterable[Iterable[String]] = claims.map(claim => alphaSegmenter(claim).filterNot(PatentStopWords.contains).toSeq)
+  lazy val preparedAbs:Iterable[String] = alphaSegmenter(abs).filterNot(PatentStopWords.contains).toSeq
   def asVectorString(docNumber:Int) = iprcLabel.features.value.activeElements.map { case (index, value) =>
     "%d %d %.3f".format(docNumber + 1, index + 1, value)
   }.mkString("\n")
@@ -67,6 +67,7 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        claim
        diagram
        picture
+       method
        1
        2
        3
@@ -79,6 +80,11 @@ object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegm
        0
        invent
        preferably
+       comprising
+       comprises
+       includes
+       including
+       provided
        system
        image
        chart
@@ -143,13 +149,13 @@ object Patent {
 
   class Label(val features:Features, labelString:String, val domain: CategoricalDomain[String]) extends LabeledCategoricalVariable[String](labelString)
 
-  class Features(features:Iterable[String]) extends BinaryFeatureVectorVariable[String] {
+  class Features(features:Iterable[String]) extends FeatureVectorVariable[String] {
     this ++= features
     def domain = Patent.FeatureDomain
 
   }
 
-  def writeSparseVector(patents:Iterator[Patent], labelFun:(Patent => Patent.Label), filename:String, fileSize:Int) {
+  def writeSparseVector(patents:Iterator[Patent], filename:String, fileSize:Int) {
     var fileNum = 0
     var itemNum = 1
     var wrt = new BufferedWriter(new FileWriter("%s_%d.vec".format(filename, fileNum)))
@@ -157,7 +163,7 @@ object Patent {
     patents.zipWithIndex.foreach{ case (patent, index) =>
       wrt.write(patent.asVectorString(index))
       wrt.write("\n")
-      labelWrt.write("%d %d".format(index + 1, labelFun(patent).intValue + 1))
+      labelWrt.write("%d %d".format(index + 1, patent.iprcLabel.intValue + 1))
       labelWrt.write("\n")
       itemNum += 1
       if(itemNum > fileSize) {
@@ -199,7 +205,7 @@ object Patent {
       println("Preparing tfidf")
       Patent.preparetfidf(patents)
       println("compressing bags")
-      Patent.compressBags(patents)
+      //Patent.compressBags(patents)
     }
     Patent.FeatureDomain.freeze()
     println("writing")
@@ -258,9 +264,9 @@ object Patent {
     }
   }
 
-  def compressBags(ents:Iterable[Patent]) {
+  def compressBags(ents:Iterable[Patent],numFeatures:Int) {
     ents.foreach{ ent =>
-      trimBagTopK(ent.iprcLabel.features.value, 32)
+      trimBagTopK(ent.iprcLabel.features.value, numFeatures)
     }
   }
 
