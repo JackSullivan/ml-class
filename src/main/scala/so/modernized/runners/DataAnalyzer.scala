@@ -23,23 +23,29 @@ object DataAnalyzer {
     println(train.length)
     println(test.length)
     val groupedPatents = train.groupBy(_.iprcSections.head)
+    var sum = 0
     groupedPatents.foreach{
             case (label,classPatents) =>
-              label + ": " + classPatents.length
+              println(label + ": " + classPatents.size)
+              sum += classPatents.size
     }
-    val tfidfVals = preparetfidf(train)
-    val coherenceFile =new BufferedWriter(new FileWriter("trueCategorytopics"))
-    //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
-    tfidfVals.foreach{ case tfidfVal=>
-      val buffer = new StringBuffer
-      buffer.append("topic" + tfidfVal._1+"\t")
-      tfidfVal._2.foreachActiveElement{ case (index, value) =>
-        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
-      }
-      coherenceFile.write(buffer.toString)
-      coherenceFile.write("\n")
+    groupedPatents.foreach{
+      case (label,classPatents) =>
+        println(label + ": " + classPatents.size/sum.toDouble)
     }
-    coherenceFile.close()
+//    val tfidfVals = preparetfidf(train)
+//    val coherenceFile =new BufferedWriter(new FileWriter("trueCategorytopics"))
+//    //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
+//    tfidfVals.foreach{ case tfidfVal=>
+//      val buffer = new StringBuffer
+//      buffer.append("topic" + tfidfVal._1+"\t")
+//      tfidfVal._2.foreachActiveElement{ case (index, value) =>
+//        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
+//      }
+//      coherenceFile.write(buffer.toString)
+//      coherenceFile.write("\n")
+//    }
+//    coherenceFile.close()
 //    groupedPatents.foreach{
 //      case (label,classPatents) =>
 //        label + ": " + classPatents.length
