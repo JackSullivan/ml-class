@@ -8,7 +8,7 @@
 \indent
 Maximum entropy models are standard tools in document classification\cite{Nigam99usingmaximum}. A maximum entropy classifier calculates a probability distribution over label classes ($c$) conditioned on the observed feature vector. Usually the predicted class of a feature vector is taken to be the class with the highest probability under a learned parameterization of the distribution. The learning step simply involves estimating the natural parameters of an exponential distribution. Customarily the observed feature vector is binary. Taking $f(c,d)$ to represent the feature vector for a single document ($d$) being assigned to a given class, and $\theta$ to be the weight vector we want to learn, this gives
 \begin{align*}
-	P(c|f, \theta) = \frac{e^{\theta \cdot f(c, d)}}{\sum_{c'} e^{\theta \cdot f(c',d)}}
+	P(c|f, \theta) = \frac{e^{\sum_d \theta \cdot f(c, d)}}{\sum_{c'} e^{\sum_d \theta \cdot f(c',d)}}
 \end{align*}
 
 We can estimate the parameters of this distribution easily using standard convex optimization techniques. Since this distribution is a natural formulation of the exponential family, it is the distribution that highest entropy subject to the constraints imposed by the observed feature vectors, hence its name. 
