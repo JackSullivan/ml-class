@@ -16,15 +16,15 @@ object LDAtoMaxEnt {
   def performLDA(trainPatents: Iterable[Patent], testPatents: Iterable[Patent])(implicit random: Random){
     val ldaEx = new LDAExperiment(trainPatents,7)(random)
     println(ldaEx.lda.topicsWordsAndPhrasesSummary(30, 30))
-    new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
-    testPatents.foreach{
-      testPatent =>
-        val doc = testPatent.asLDADocument(WordDomain)
-        ldaEx.lda.addDocument(doc,random)
-        ldaEx.lda.inferDocumentTheta(doc)
-        ldaEx.lda.maximizePhisAndThetas()
-        testPatent.unsupervisedLabel = Some(new Label(testPatent.iprcLabel.features,ldaEx.getLDADocTopic(doc),UnsupervisedLabelDomain))
-    }
+//    new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
+//    testPatents.foreach{
+//      testPatent =>
+//        val doc = testPatent.asLDADocument(WordDomain)
+//        ldaEx.lda.addDocument(doc,random)
+//        ldaEx.lda.inferDocumentTheta(doc)
+//        ldaEx.lda.maximizePhisAndThetas()
+//        //testPatent.unsupervisedLabel = Some(new Label(testPatent.iprcLabel.features,ldaEx.getLDADocTopic(doc),UnsupervisedLabelDomain))
+//    }
   }
 
   def main(args:Array[String]){
@@ -38,11 +38,11 @@ object LDAtoMaxEnt {
     val (training,testing) = (patentGroups.flatMap(_._1),patentGroups.flatMap(_._2))
     //val (training,testing) = patents.split(.7)
     performLDA(training,testing)(random)
-    Patent.FeatureDomain.freeze()
-    val (train, test) = testing.shuffle.split(0.7)
+    //Patent.FeatureDomain.freeze()
+    //val (train, test) = testing.shuffle.split(0.7)
 
-    val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(train,test)
-    println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
+    //val results = new MaxEntExperiment(_.unsupervisedLabel.get).runExperiment(train,test)
+    //println("Method: " + results.method + " Train Accuracy: " + results.trainAccuracy + " Test Accuracy: " + results.testAccuracy)
   //  val multiclassPatents = ldaEx.getMultiClassPatents()
    // println("MultiClass Patents Labeled with Multiple Classes: " + multiclassPatents.map(_.))
   }

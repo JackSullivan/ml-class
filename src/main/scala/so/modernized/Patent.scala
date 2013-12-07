@@ -30,11 +30,11 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   private def generateFeatures(claims:Iterable[Iterable[String]], abs:Iterable[String], titleTokens:Iterable[String]):Patent.Features = {
     val fs = abs ++
-             abs.sliding(2).map(_.mkString(" ")).toSeq ++
+             abs.sliding(2).map(_.mkString(" ").toLowerCase()).toSeq ++
              claims.flatten ++
-             claims.map(_.sliding(2).map(_.mkString(" "))).flatten ++
+             claims.map(_.sliding(2).map(_.mkString(" ").toLowerCase())).flatten ++
              titleTokens
-             titleTokens.sliding(2).map(_.mkString(" ")).toSeq
+             titleTokens.sliding(2).map(_.mkString(" ").toLowerCase()).toSeq
 
     new Patent.Features(fs)
   }

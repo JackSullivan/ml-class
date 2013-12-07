@@ -58,7 +58,7 @@ object DataAnalyzer {
     val idfs = idfCounts(patentVecs.unzip._2)
     println("generated idf counts")
     val counts = patentVecs.size
-    patentVecs.foreach{patentVec => tfidf(patentVec._2, idfs, counts); trimBagTopK(patentVec._2,20)}
+    patentVecs.foreach{patentVec => tfidf(patentVec._2, idfs, counts); trimBagTopK(patentVec._2,50)}
 
     patentVecs
   }

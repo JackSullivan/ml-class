@@ -32,7 +32,6 @@ object TopicCoherence {
     val wordcount =args(2).toInt
     val output = args(3)
     val topic_highfrequencyword_list = generateHighTopicFrequenciesList(topicfile, wordcount)
-
     val (coherence,average) = runAnalysisAndCoherenceTesting(wordcount,patents,topic_highfrequencyword_list)
     val coherencefile = new java.io.PrintWriter(new File(output))
     coherence.foreach{
@@ -117,22 +116,22 @@ object TopicCoherence {
     println("Co-document frequencies "+codocument_frequencies)
     println("Reading documents")
     implicit object WordDomain extends CategoricalSeqDomain[String]
-    val doc_hash = new HashMap[String,Int]
+
      patents.foreach{patent=>
      count=count+1
      //println("Line count :" +count)
       //val doc = patent.asLDADocument
 
-
+     val doc_hash = new HashMap[String,Int]
      val docWords = patent.iprcLabel.features.activeCategories
-      for(type_values <- docWords) {
-        if(!doc_hash.containsKey(type_values)){
-            doc_hash.put(type_values,0)
-        }
-      }
+//      for(type_values <- docWords) {
+//        if(!doc_hash.containsKey(type_values)){
+//            doc_hash.put(type_values,0)
+//        }
+//      }
 
        for(vl<-types) {
-        if(doc_hash.containsKey(vl)){
+        if(docWords.contains(vl)){
           val newcount = document_frequencies.get(vl)+1
           //println("Reached")
           document_frequencies.put(vl,newcount)
@@ -143,7 +142,7 @@ object TopicCoherence {
          //println(pairs)
          val pair = pairs.split(" ")
          //println(pair(0))
-         if(doc_hash.containsKey(pair(0)) && doc_hash.containsKey(pair(1))){
+         if(docWords.contains(pair(0)) && docWords.contains(pair(1))){
            //println("Reached2")
            val newcount = codocument_frequencies.get(pairs)+1
            codocument_frequencies.put(pairs,newcount)
