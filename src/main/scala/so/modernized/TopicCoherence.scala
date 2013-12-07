@@ -68,7 +68,7 @@ object TopicCoherence {
 //        topword+=word
 //      }
 
-      topic_highfrequencyword_list("topic"+line._2) = topic_words.drop(0).toVector.map{t => println(t);t}.filterNot(_.split(' ').length > 1).filterNot(_.startsWith("topic"))
+      topic_highfrequencyword_list("topic"+line._2) = topic_words.slice(1,wordcount+1).toVector.filterNot(_.startsWith("topic"))//.filterNot(_.split(' ').length > 1)
 
     }
     topic_words_file.close()
