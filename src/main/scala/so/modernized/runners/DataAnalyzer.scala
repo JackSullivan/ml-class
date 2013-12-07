@@ -19,9 +19,8 @@ object DataAnalyzer {
     //val numWords:Int = args(1).toInt
     val patents = PatentPipeline(dataDir).take(40000)
     implicit val random = scala.util.Random
-    val (train, test) = patents.toList.split(0.7)
+    val train = patents.toList
     println(train.length)
-    println(test.length)
     val groupedPatents = train.groupBy(_.iprcSections.head)
     var sum = 0
     groupedPatents.foreach{
