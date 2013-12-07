@@ -8,20 +8,55 @@ The IPC classification system was initially created in 1968. Although the subcat
 	C(t;V^{(t)}) = \sum_{m=2}^M \sum_{l=1}^{m-1} \log \frac{D(v^{(t)}_m, v^{(t)}_l)}{D(v^{(t)}_l)}
 \end{align*}
 
-
+This metric is essentially an unnormalized pointwise mutual information, but has been shown to perform better as a coherency metric\cite{Mimno_optimizingsemantic}. Using this metric we calculated coherence scores for each of the IPC classifications in \emph{jagged-40000}\ref{tab:cohere}. We calculated these scores based on the 50 most common words in each. These coherency scores confirm the initial intuition from examining the proportions - that 
 
 \begin{tablehere}
 	\label{tab:skew}
 	\centering
-	\caption{Proportion of each class in \emph{jagged-40000}}
+	\caption{Proportion of IPC classes in \emph{jagged-40000}}
 \end{tablehere}
 
 Table of skew
 
 
+\begin{tablehere}
+	\label{tab:cohere}
+	\centering
+	\caption{coherence scores for IPC classes in \emph{jagged-40000}}
+\end{tablehere}
+
 Table of topics
 
 
 Coherence
+
+In addition to determining how to best classify patents using the CPC labeling scheme, we wanted to evaluate the class system defined by the Patent office.  The patent class system takes it's class structure from the International Patent Classification scheme originated as a result of 1956's European Convention on the International Classification of Patents for Invention in 1968.  Since it's origin, it has been updated in eight editions, the last in 2006.  Despite multiple editions, the top eight categories we examine in this work have not been altered.
+  
+While the top structure has remained the same, the different types of new technologies are ever changing.  
+As many Machine Learning problems have shown previously, tasks which are easy for human's are not easy for machines.  The distinction between a patent in the field of physics and a patent in the field of electricity becomes a difficult problem when the classifier has to rely on only n-grams of terms. 
+
+We observed in our samples that the distribution of incoming patents is shewed.  The proportions of each group in our dataset of patents can be seen in Table Z.  It can be assumed that this distribution can be generalized to the full set of patents.  To investigate how this affects supervised classification, we employed unsupervised methods to generate topics from the dataset of patents.  
+
+ 
+\subsection{Topic Coherence}
+\begin{figure}[!h]
+\begin{center}
+\caption{Maximum Entropy with Dimensionally Reduction}
+\begin{tabular}{|l l|}
+\hline
+
+Topic A  &	large updating, establish database,accessible receive,users store,store health,store population,large update,update population,database connected,determines respective,stores health,stores population\\ \hline
+Topic B  &	checks brake,predetermined brake,pressure addition,addition checks,checks speed,acceleration dependent,dependent speed,speed dynamic,dynamic cornering,cornering threshold,segments provide,mode recognize,recognize imminent,situation initiate,initiate switch,detecting driving,situation motor,segments operating,mode recognizes,situation initiates\\ \hline	
+Topic C  & prismatic face,face InGaN,InGaN base,semiconductor heterostructure,heterostructure median,diameter phosphor,profile inserting,longitudinally cladding,desired collapsing,disposed mixing,refraction gain,core silica,silica doped,amplifier length,length meters,amplifier forming,refraction plurality, refraction inserting, preform drawing, layers collapsing\\ \hline
+Topic D  & blend multiple, fibers dimensionally, dimensionally spirally, spirally crimped, crimped selected, consisting cotton, wool silk, silk synthetic, fibers polyamide, polyester polyacrylonitrile, polyacrylonitrile polyethylene, polypropylene polyvinyl, chloride polyvinylidene, chloride polyurethane, fabric stretch, stretch machine, fabric growth, growth greater, greater stretch, terephthalate bicomponent\\\hline
+Topic E  & measured flue, period formed, combustion reduced, addition decrease, Disclosed pool, cleaning electric, cavity electrical, vehicle filtering, filtering located, back electrical, located filtering, filtering vehicle, vehicle pulled, pulled pool, pool handle, top drain, bottom allowing, drain completely, completely vehicle, vehicle cavity\\ \hline 
+Topic F  & displacement cursor, cursor cost, CI consecutive, consecutive dependent, dependent discrepancy, index speed, speed comprise, comprise keyboard, keyboard entering, entering cost, validating entered, flight display, dedicated page, page displaying, discrepancy fuel, consumption discrepancy, integrated flight, documentation EFB, EFB device, integrated server\\ \hline 
+Topic G  & automated measurements, measurements iterative, iterative calculations, calculations controls, routine device, routine software, routine controls, leveling maximum, deviation planarity, planarity nm, nm height, motors instrument, array nanoscopic, tips supported, providing points, determine points, contact tips, interface nanoscopic, nanoscopic tip, tip contacts \\ \hline
+Topic H  & signing media, media streams, streams processed, processed accommodate, accommodate resource, requirements environment, application intermediary, intermediary choose, choose advertisement, calculating received, calculated hl, hl equal, authentication calculation, storage streams, authentication obtaining, blocks authentication, authentication apparatus, hash set, calculated equal, block stream \\ \hline
+\end{tabular}
+\end{center}
+\end{figure}
+
+Investigate where things should be split
 
 % section classification_evaluation (end)
