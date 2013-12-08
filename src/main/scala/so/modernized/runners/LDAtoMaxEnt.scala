@@ -15,7 +15,7 @@ import scala.Some
 object LDAtoMaxEnt {
   def performLDA(trainPatents: Iterable[Patent], testPatents: Iterable[Patent])(implicit random: Random){
     val ldaEx = new LDAExperiment(trainPatents,7)(random)
-    println(ldaEx.lda.topicsWordsAndPhrasesSummary(30, 30))
+    println(ldaEx.lda.topicsWordsAndPhrasesSummary(30, 20))
 //    new EvaluateLDA(ldaEx.patents,ldaEx.numTopics)
 //    testPatents.foreach{
 //      testPatent =>
@@ -29,9 +29,9 @@ object LDAtoMaxEnt {
 
   def main(args:Array[String]){
     val inDir = args(0)
-    val regularizer = new PatentRegularizer(1000,_.iprcLabel)
-    val patents = regularizer.apply(PatentPipeline(inDir)).toIterable
-
+    //val regularizer = new PatentRegularizer(1000,_.iprcLabel)
+   // val patents = regularizer.apply(PatentPipeline(inDir)).toIterable
+    val patents = PatentPipeline(inDir).toList.take(40000)
     println("Number of Patents Read in: " + patents.size)
     implicit val random = scala.util.Random
     val patentGroups = patents.groupBy(_.iprcLabel.categoryValue).map(group => group._2.split(.7))
