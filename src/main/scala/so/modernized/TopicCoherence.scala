@@ -20,11 +20,11 @@ object TopicCoherence {
     //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
     tfidfVals.foreach{ tfidfVal=>
       val buffer = new StringBuffer
-      buffer.append("topic" + tfidfVal._1+"\t")
+      buffer.append("topic" + tfidfVal._1+":")
       tfidfVal._2.foreachActiveElement{ case (index, value) =>
-        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"\t")
+        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"&")
       }
-      catTopics.write(buffer.toString)
+      catTopics.write(buffer.toString.dropRight(1))//remove last "&"
       catTopics.write("\n")
     }
     catTopics.close()
@@ -54,7 +54,7 @@ object TopicCoherence {
     val topic_words_file = scala.io.Source.fromFile(new File(fileName))
     for (line <- topic_words_file.getLines().zipWithIndex) {
       println("Line Read")
-      val topic_words = line._1.split("\t")
+      val topic_words = line._1.split(":")(1).split("&")
       //var topWord:Vector[String] = Vector()
 
      // val topWords = topic_words.slice(1,wordcount+1)
