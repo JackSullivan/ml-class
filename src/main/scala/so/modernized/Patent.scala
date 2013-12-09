@@ -30,11 +30,11 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
   private def generateFeatures(claims:Iterable[Iterable[String]], abs:Iterable[String], titleTokens:Iterable[String]):Patent.Features = {
     val fs = abs ++
-             abs.sliding(2).map(_.mkString(" ").toLowerCase()).toSeq ++
+             abs.sliding(2).map(_.mkString(" ").toLowerCase).toSeq ++
              claims.flatten ++
-             claims.map(_.sliding(2).map(_.mkString(" ").toLowerCase())).flatten ++
+             claims.map(_.sliding(2).map(_.mkString(" ").toLowerCase)).flatten ++
              titleTokens
-             titleTokens.sliding(2).map(_.mkString(" ").toLowerCase()).toSeq
+             titleTokens.sliding(2).map(_.mkString(" ").toLowerCase).toSeq
 
     new Patent.Features(fs)
   }
@@ -53,13 +53,14 @@ case class Patent(id:String,iprcSections:Iterable[String], uspcSections:Iterable
 
 object LDAStopWords extends StringSet{
   val contents = PatentStopWords.contents
-  def contains(s : scala.Predef.String) :Boolean = this.contents.contains(s.toLowerCase())
+  def contains(s : scala.Predef.String) :Boolean = this.contents.contains(s.toLowerCase)
   def +=(s : scala.Predef.String) = this.contents += s
 }
 
 object PatentStopWords extends WordLexicon("StopWords", nonWhitespaceClassesSegmenter, LowercaseLemmatizer) {
   this ++=
     """fig
+       figs
        invention
        patent
        figure

@@ -14,9 +14,9 @@ object TopicCoherence {
     val dataDir = args(0)
     val patents = PatentPipeline(dataDir).take(40000).toIterable
     implicit val random = scala.util.Random
+    patents.foreach{_.iprcLabel}
     val tfidfVals = DataAnalyzer.preparetfidf(patents)
-
-    val catTopics =new BufferedWriter(new FileWriter("trueCategorytopics.txt"))
+    val catTopics =new BufferedWriter(new FileWriter("TFIDFCategoryTopics.txt"))
     //val coherencefile = new java.io.PrintWriter(new File("trueCategoryTopics.rtf"))
     tfidfVals.foreach{ tfidfVal=>
       val buffer = new StringBuffer
@@ -28,22 +28,24 @@ object TopicCoherence {
       catTopics.write("\n")
     }
     catTopics.close()
-    val topicfile = "trueCategorytopics.txt"
-    val wordcount =args(2).toInt
-    val output = args(3)
-    val topic_highfrequencyword_list = generateHighTopicFrequenciesList(topicfile, wordcount)
-    val (coherence,average) = runAnalysisAndCoherenceTesting(wordcount,patents,topic_highfrequencyword_list)
-    val coherencefile = new java.io.PrintWriter(new File(output))
-    coherence.foreach{
+    val topicFile = "LDATopics.txt"
+    val tfidfFile = "TFIDFCategoryTopics.txt"
+    val wordcount = 50
+    val output = args(1)
+    val topic_highfrequencyword_list = generateHighTopicFrequenciesList(topicFile, wordcount)
+    val tfidf_highfrequencyword_list = generateHighTopicFrequenciesList(tfidfFile, wordcount)
+    val (topicCoherence,topicAverage) = runAnalysisAndCoherenceTesting(wordcount,patents,topic_highfrequencyword_list)
+    val (tfidfCoherence,tfidfAverage) = runAnalysisAndCoherenceTesting(wordcount,patents,tfidf_highfrequencyword_list)
+    val coherenceFile = new java.io.PrintWriter(new File(output))
+    coherenceFile.write("LDA Topics Coherence")
+    topicCoherence.foreach{
       case (topic,coherenceValue) =>
-        coherencefile.write(topic+" "+coherenceValue+"\n")
+        coherenceFile.write(topic+" "+coherenceValue+"\n")
     }
-    coherencefile.write("Average = "+average+"\n")
-    coherencefile.close()
-    println(coherence)
-
-
-
+    coherenceFile.write("Average = "+topicAverage+"\n")
+    coherenceFile.write("TFiDF Coherence")
+    coherenceFile.write("Average = "+tfidfAverage+"\n")
+    coherenceFile.close()
   }
 
   def generateHighTopicFrequenciesList(fileName: String, wordcount: Int):mutable.HashMap[String,Vector[String]] ={
