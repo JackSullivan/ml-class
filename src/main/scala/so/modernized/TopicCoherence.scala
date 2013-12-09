@@ -12,7 +12,7 @@ import so.modernized.runners.DataAnalyzer
 object TopicCoherence {
   def main(args:Array[String]){
     val dataDir = args(0)
-    val patents = PatentPipeline(dataDir).take(40000).toIterable
+    val patents = PatentPipeline(dataDir).take(1000).toIterable
     implicit val random = scala.util.Random
     patents.foreach{_.iprcLabel}
     val tfidfVals = DataAnalyzer.preparetfidf(patents)
@@ -22,7 +22,7 @@ object TopicCoherence {
       val buffer = new StringBuffer
       buffer.append("topic" + tfidfVal._1+":")
       tfidfVal._2.foreachActiveElement{ case (index, value) =>
-        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index)+"&")
+        buffer.append(Patent.FeatureDomain._dimensionDomain.dimensionName(index).toLowerCase+"&")
       }
       catTopics.write(buffer.toString.dropRight(1))//remove last "&"
       catTopics.write("\n")
@@ -44,6 +44,10 @@ object TopicCoherence {
     }
     coherenceFile.write("Average = "+topicAverage+"\n")
     coherenceFile.write("TFiDF Coherence")
+    tfidfCoherence.foreach{
+      case (topic,coherenceValue) =>
+        coherenceFile.write(topic+" "+coherenceValue+"\n")
+    }
     coherenceFile.write("Average = "+tfidfAverage+"\n")
     coherenceFile.close()
   }
@@ -68,9 +72,10 @@ object TopicCoherence {
 //      for(word <- topWords){
 //        topword+=word
 //      }
+      println(line._1.split(":")(0))
 
-      topic_highfrequencyword_list("topic"+line._2) = topic_words.slice(1,wordcount+1).toVector.filterNot(_.startsWith("topic"))//.filterNot(_.split(' ').length > 1)
-
+      topic_highfrequencyword_list("topic"+line._2) = topic_words.toVector.filterNot(_.startsWith("topic")).filterNot(_ == "")//.filterNot(_.split(' ').length > 1)
+      println(topic_highfrequencyword_list("topic"+line._2).size)
     }
     topic_words_file.close()
     topic_highfrequencyword_list
@@ -80,14 +85,14 @@ object TopicCoherence {
 
   def runAnalysisAndCoherenceTesting(wordcount: Int,patents: Iterable[Patent],topic_highfrequencyword_list: mutable.HashMap[String,Vector[String]]):(mutable.HashMap[String,Double],Double)={
      var count = 0
-     val numtopics = topic_highfrequencyword_list.size
+     val numtopics = topic_highfrequencyword_list.keySet.size
 
      println("Intializing term-document frequencies")
      var types = scala.collection.mutable.Set[String]()
      val document_frequencies = new HashMap[String,Int]
      val codocument_frequencies = new HashMap[String,Int]
      var type_pairs =  scala.collection.mutable.Set[String]()
-
+     println(topic_highfrequencyword_list.map(_._2.size))
      //Initializing term document frequencies
      for(i<- 0 to numtopics-1){
       for(term <- topic_highfrequencyword_list.apply("topic"+i)){
@@ -106,10 +111,12 @@ object TopicCoherence {
        val vm =topic_highfrequencyword_list.get("topic"+i).get(m)
        for(l<- 0 to m-1){
           val vl = topic_highfrequencyword_list.apply("topic"+i)(l)
-          if((!codocument_frequencies.containsKey(vm+" "+vl)) && (!codocument_frequencies.containsKey(vl+" "+vm))){
-            type_pairs += vm+" "+vl
-            codocument_frequencies.put(vm+" "+vl,0)
-          }
+          if(vl != "" && vm != ""){
+          if((!codocument_frequencies.containsKey(vm+"+"+vl)) && (!codocument_frequencies.containsKey(vl+"+"+vm))){
+            type_pairs += (vm+"+"+vl)
+            println(vm+"+"+vl)
+            codocument_frequencies.put(vm+"+"+vl,0)
+          } }
        }
       }
     }
@@ -142,7 +149,9 @@ object TopicCoherence {
 
        for(pairs <- type_pairs){
          //println(pairs)
-         val pair = pairs.split(" ")
+         val pair = pairs.split('+')
+         if(pair.size != 2){
+           pair.foreach(print(_)); println()}
          //println(pair(0))
          if(docWords.contains(pair(0)) && docWords.contains(pair(1))){
            //println("Reached2")
@@ -160,13 +169,13 @@ object TopicCoherence {
 
     val coherence = mutable.HashMap[String,Double]()
     var sum=0.0
-
+    println(numtopics)
     for(i <- 0 to numtopics-1){
-       var coherencevalue:Double = 0.0
-
+      var coherencevalue:Double = 0.0
        for(m <- 1 to wordcount-1){
          val vm =topic_highfrequencyword_list.apply("topic"+i)(m)
          for(l<- 0 to m-1){
+
              val vl = topic_highfrequencyword_list.apply("topic"+i)(l)
 
              //println(vm+" "+vl +" "+codocument_frequencies.get(vm+" "+vl))
